@@ -8,7 +8,7 @@
       "name": "细颗粒物 (PM2.5)",
       "description": "全球逐小时PM2.5浓度",
       "unit": "μg/m³",
-      "url_template": "./data/rendered/3600x3600_{date}-{hour}_SPM2p5.webp",
+      "url_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/20220601/3600x1800_20220601-H02_SPM2p5.webp",
       "dates": [
         "20220601"
       ],
