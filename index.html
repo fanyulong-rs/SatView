@@ -120,8 +120,8 @@ input[type=range]{accent-color:var(--accent)}
 let cfg,products=[],current,overlay,map,countryLayer,showCountries=true
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
-const urlOf=(p,d,h)=>p.url_template.replace('{date}',d).replace('{hour}',h)
-const hours24=[...Array(24)].map((_,i)=>String(i).padStart(2,'0'))
+const urlOf=(p,d,h)=>p.url_template.replaceAll('{date}',d).replaceAll('{hour}',h)
+const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
@@ -168,7 +168,7 @@ current=products.find(p=>p.id===id)||products[0]
 $('product-desc').textContent=current.description||''
 $('date').innerHTML=(current.dates||[]).map(d=>`<option value="${d}">${d}</option>`).join('')
 $('hour').innerHTML=hours24.map(h=>`<option value="${h}">${h}</option>`).join('')
-const now=String(new Date().getHours()).padStart(2,'0')
+const now='H'+String(new Date().getHours()).padStart(2,'0')
 $('hour').value=hours24.includes(current.default_hour)?current.default_hour:now
 updateLayer()
 updateLegend()
