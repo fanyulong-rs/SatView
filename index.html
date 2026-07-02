@@ -87,6 +87,18 @@ input[type=range]{accent-color:var(--accent)}
 <select id="hour"></select>
 </div>
 <div class="group">
+<label>时间轴</label>
+<div class="range-row">
+<input id="time-slider" type="range" min="0" max="23" value="0">
+<span id="time-val">H00</span>
+</div>
+</div>
+<div class="group">
+<div class="range-row">
+<button class="btn secondary" id="play">播放</button>
+</div>
+</div>
+<div class="group">
 <label>图层透明度</label>
 <div class="range-row">
 <input id="opacity" type="range" min="0" max="100" value="80">
@@ -117,7 +129,7 @@ input[type=range]{accent-color:var(--accent)}
 </div>
 
 <script>
-let cfg,products=[],current,overlay,map,countryLayer,showCountries=true
+let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,timer=null,playing=false
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
 const urlOf=(p,d,h)=>p.url_template.replaceAll('{date}',d).replaceAll('{hour}',h)
@@ -167,11 +179,23 @@ function selectProduct(id){
 current=products.find(p=>p.id===id)||products[0]
 $('product-desc').textContent=current.description||''
 $('date').innerHTML=(current.dates||[]).map(d=>`<option value="${d}">${d}</option>`).join('')
+$('date').value=(current.dates&&current.dates[0])||''
 $('hour').innerHTML=hours24.map(h=>`<option value="${h}">${h}</option>`).join('')
-const now='H'+String(new Date().getHours()).padStart(2,'0')
-$('hour').value=hours24.includes(current.default_hour)?current.default_hour:now
+const h=current.default_hour&&hours24.includes(current.default_hour)?current.default_hour:'H00'
+$('hour').value=h
+$('time-slider').value=hours24.indexOf(h)
+$('time-val').textContent=h
 updateLayer()
 updateLegend()
+}
+
+function setHourByIndex(i){
+i=(i+24)%24
+const h=hours24[i]
+$('time-slider').value=i
+$('hour').value=h
+$('time-val').textContent=h
+updateLayer()
 }
 
 function updateLayer(){
@@ -195,9 +219,32 @@ $('legend-labels').innerHTML=(l.labels||[]).map(x=>`<span>${x}</span>`).join('')
 $('legend-note').textContent=l.note||''
 }
 
+function stopPlay(){
+playing=false
+if(timer){clearInterval(timer);timer=null}
+$('play').textContent='播放'
+}
+
 $('product').onchange=e=>selectProduct(e.target.value)
-$('date').onchange=updateLayer
-$('hour').onchange=updateLayer
+$('date').onchange=()=>updateLayer()
+$('hour').onchange=()=>{
+const i=hours24.indexOf($('hour').value)
+if(i>=0){
+$('time-slider').value=i
+$('time-val').textContent=$('hour').value
+}
+updateLayer()
+}
+$('time-slider').oninput=e=>setHourByIndex(+e.target.value)
+$('play').onclick=()=>{
+playing=!playing
+$('play').textContent=playing?'暂停':'播放'
+if(timer){clearInterval(timer);timer=null}
+if(playing)timer=setInterval(()=>{
+let i=(+$('time-slider').value+1)%24
+setHourByIndex(i)
+},800)
+}
 $('opacity').oninput=e=>{
 $('opacity-val').textContent=e.target.value+'%'
 if(overlay)overlay.setOpacity(+e.target.value/100)
