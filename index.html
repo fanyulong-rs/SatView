@@ -126,7 +126,7 @@ map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
 
 async function loadCountries(){
-const r=await fetch('./data/countries.geojson?ts='+Date.now())
+const r=await fetch('.World_Countries.geojson?ts='+Date.now())
 if(!r.ok)throw new Error('countries.geojson 读取失败：HTTP '+r.status)
 countryLayer=L.geoJSON(await r.json(),{
 style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}
