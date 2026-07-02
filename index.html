@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SatView · 星图视界</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #1f2937;
+      --border:    rgba(255,255,255,.08);
+      --accent:    #3b82f6;
+      --accent-h:  #60a5fa;
+      --text:      #e6edf3;
+      --text-muted:#8b949e;
+      --radius:    10px;
+      --panel-w:   300px;
+      --header-h:  52px;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* ─── Header ───────────────────────────────────────────── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: rgba(13,17,23,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      z-index: 1100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .logo-text {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: .3px;
+    }
+    .logo-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .header-spacer { flex: 1; }
+
+    .header-badge {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+
+    /* ─── Map ──────────────────────────────────────────────── */
+    #map {
+      position: fixed;
+      top: var(--header-h); left: 0; right: 0; bottom: 0;
+      z-index: 0;
+    }
+
+    .leaflet-container { background: #0d1117; }
+
+    /* ─── Panel Toggle Button ──────────────────────────────── */
+    #panel-toggle {
+      position: fixed;
+      top: calc(var(--header-h) + 12px);
+      right: calc(var(--panel-w) + 12px);
+      z-index: 1050;
+      width: 36px; height: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: all .2s;
+    }
+    #panel-toggle:hover { color: var(--text); border-color: var(--accent); }
+    #panel-toggle.collapsed { right: 12px; }
+
+    /* ─── Side Panel ───────────────────────────────────────── */
+    #panel {
+      position: fixed;
+      top: var(--header-h); right: 0;
+      width: var(--panel-w);
+      bottom: 0;
+      background: rgba(22,27,34,.96);
+      backdrop-filter: blur(16px);
+      border-left: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      transition: transform .25s cubic-bezier(.4,0,.2,1);
+      overflow: hidden;
+    }
