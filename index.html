@@ -126,11 +126,15 @@ map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
 
 async function loadCountries(){
-const r=await fetch('./World_Countries.geojson?ts='+Date.now())
-if(!r.ok)throw new Error('countries.geojson 读取失败：HTTP '+r.status)
-countryLayer=L.geoJSON(await r.json(),{
-style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}
-}).addTo(map)
+try{
+const u='https://raw.githubusercontent.com/fanyulong-rs/SatView/main/World_Countries.geojson?ts='+Date.now()
+const r=await fetch(u)
+if(!r.ok)throw new Error('World_Countries.geojson 读取失败：HTTP '+r.status)
+countryLayer=L.geoJSON(await r.json(),{style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}}).addTo(map)
+}catch(e){
+console.warn(e)
+status('国界加载失败，主图不受影响')
+}
 }
 
 async function init(){
@@ -180,7 +184,7 @@ $('info').innerHTML=`产品：${current.name||current.id}%%BR%%时间：${d} ${h
 }
 
 function updateLegend(){
-const l=current.legend
+const l=current?.legend
 if(!l){$('legend').style.display='none';return}
 $('legend').style.display='block'
 $('legend-title').textContent=(l.title||current.name||current.id)+(l.unit?' / '+l.unit:'')
