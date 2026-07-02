@@ -94,6 +94,10 @@ input[type=range]{accent-color:var(--accent)}
 </div>
 </div>
 <div class="group">
+<label>矢量图层</label>
+<button class="btn secondary" id="toggle-countries">国界开关：开</button>
+</div>
+<div class="group">
 <button class="btn" id="download">下载原图</button>
 </div>
 <div class="group">
@@ -113,13 +117,21 @@ input[type=range]{accent-color:var(--accent)}
 </div>
 
 <script>
-let cfg,products=[],current,overlay,map
+let cfg,products=[],current,overlay,map,countryLayer,showCountries=true
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
 const urlOf=(p,d,h)=>p.url_template.replace('{date}',d).replace('{hour}',h)
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
+
+async function loadCountries(){
+const r=await fetch('./data/countries.geojson?ts='+Date.now())
+if(!r.ok)throw new Error('countries.geojson 读取失败：HTTP '+r.status)
+countryLayer=L.geoJSON(await r.json(),{
+style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}
+}).addTo(map)
+}
 
 async function init(){
 try{
@@ -133,6 +145,7 @@ fillProducts()
 const def=products.find(p=>p.id===cfg.default_product)||products[0]
 $('product').value=def.id
 selectProduct(def.id)
+await loadCountries()
 status('配置加载完成')
 }catch(e){
 console.error(e)
@@ -196,6 +209,14 @@ $('panel').classList.toggle('collapsed')
 $('panel-toggle').classList.toggle('collapsed')
 $('panel-toggle').textContent=$('panel').classList.contains('collapsed')?'‹':'›'
 setTimeout(()=>map.invalidateSize(),260)
+}
+$('toggle-countries').onclick=()=>{
+showCountries=!showCountries
+if(countryLayer){
+if(showCountries)countryLayer.addTo(map)
+else map.removeLayer(countryLayer)
+}
+$('toggle-countries').textContent='国界开关：'+(showCountries?'开':'关')
 }
 
 init()
