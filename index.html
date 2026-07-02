@@ -49,6 +49,13 @@ input[type=range]{accent-color:var(--accent)}
 .status{position:fixed;left:16px;top:calc(var(--header-h) + 16px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:420px}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
 .leaflet-control-attribution a{color:var(--accent-h)!important}
+.time-wrap{display:flex;flex-direction:column;gap:6px}
+#time-slider{width:100%;height:24px;appearance:none;-webkit-appearance:none;background:transparent}
+#time-slider::-webkit-slider-runnable-track{height:6px;background:#e5e7eb;border-radius:999px}
+#time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);margin-top:-6px;border:2px solid #fff;box-shadow:0 0 0 2px rgba(59,130,246,.25)}
+#time-slider::-moz-range-track{height:6px;background:#e5e7eb;border-radius:999px}
+#time-slider::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--accent)}
+.time-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);padding:0 2px}
 @media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}}
 </style>
 </head>
@@ -88,15 +95,13 @@ input[type=range]{accent-color:var(--accent)}
 </div>
 <div class="group">
 <label>时间轴</label>
-<div class="range-row">
+<div class="time-wrap">
 <input id="time-slider" type="range" min="0" max="23" value="0">
-<span id="time-val">H00</span>
+<div class="time-labels"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
 </div>
 </div>
 <div class="group">
-<div class="range-row">
 <button class="btn secondary" id="play">播放</button>
-</div>
 </div>
 <div class="group">
 <label>图层透明度</label>
@@ -184,7 +189,6 @@ $('hour').innerHTML=hours24.map(h=>`<option value="${h}">${h}</option>`).join(''
 const h=current.default_hour&&hours24.includes(current.default_hour)?current.default_hour:'H00'
 $('hour').value=h
 $('time-slider').value=hours24.indexOf(h)
-$('time-val').textContent=h
 updateLayer()
 updateLegend()
 }
@@ -194,7 +198,6 @@ i=(i+24)%24
 const h=hours24[i]
 $('time-slider').value=i
 $('hour').value=h
-$('time-val').textContent=h
 updateLayer()
 }
 
@@ -231,7 +234,6 @@ $('hour').onchange=()=>{
 const i=hours24.indexOf($('hour').value)
 if(i>=0){
 $('time-slider').value=i
-$('time-val').textContent=$('hour').value
 }
 updateLayer()
 }
