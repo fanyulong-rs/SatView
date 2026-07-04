@@ -43,8 +43,10 @@ input[type=range]{accent-color:var(--accent)}
 .info{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius);padding:12px;font-size:12px;line-height:1.6;color:var(--text-muted)}
 .legend{position:fixed;left:16px;bottom:16px;z-index:900;background:rgba(22,27,34,.94);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:var(--radius);padding:12px;min-width:220px}
 .legend-title{font-size:13px;font-weight:600;margin-bottom:8px}
-.legend-bar{height:12px;border-radius:999px;margin-bottom:8px}
-.legend-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted)}
+.legend-bar-wrap{position:relative;height:18px;margin-bottom:8px}
+.legend-bar{height:12px;border-radius:999px}
+.legend-labels{position:absolute;left:0;right:0;top:0;height:12px;pointer-events:none}
+.legend-labels span{position:absolute;transform:translateX(-50%);color:#fff;font-size:10px;line-height:12px;text-shadow:0 1px 2px rgba(0,0,0,.85);white-space:nowrap}
 .legend-note{font-size:11px;color:var(--text-muted);line-height:1.4;margin-top:8px}
 .status{position:fixed;left:16px;top:calc(var(--header-h) + 16px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:420px}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
@@ -128,8 +130,10 @@ input[type=range]{accent-color:var(--accent)}
 
 <div class="legend" id="legend" style="display:none">
 <div class="legend-title" id="legend-title"></div>
+<div class="legend-bar-wrap">
 <div class="legend-bar" id="legend-bar"></div>
 <div class="legend-labels" id="legend-labels"></div>
+</div>
 <div class="legend-note" id="legend-note"></div>
 </div>
 
@@ -147,7 +151,7 @@ async function loadCountries(){
 try{
 const u='https://raw.githubusercontent.com/fanyulong-rs/SatView/main/Countries.geojson?ts='+Date.now()
 const r=await fetch(u)
-if(!r.ok)throw new Error('World_Countries.geojson 读取失败：HTTP '+r.status)
+if(!r.ok)throw new Error('Countries.geojson 读取失败：HTTP '+r.status)
 countryLayer=L.geoJSON(await r.json(),{style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}}).addTo(map)
 }catch(e){
 console.warn(e)
@@ -209,7 +213,7 @@ overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(ma
 overlay.on('load',()=>status('图层已加载：'+u))
 overlay.on('error',()=>status('图像加载失败：'+u))
 map.fitBounds(current.bounds)
-$('info').innerHTML=`产品：${current.name||current.id}%%BR%%时间：${d} ${h}%%BR%%单位：${current.unit||'-'}<br>路径：${u}`
+$('info').innerHTML=`Date: ${d} ${h}`
 }
 
 function updateLegend(){
@@ -217,9 +221,8 @@ const l=current?.legend
 if(!l){$('legend').style.display='none';return}
 $('legend').style.display='block'
 $('legend-title').textContent=(l.title||current.name||current.id)+(l.unit?' / '+l.unit:'')
-$('legend-bar').style.background='linear-gradient(to right,'+(l.colors||[]).join(',')+')'
-$('legend-labels').innerHTML=(l.labels||[]).map(x=>`<span>${x}</span>`).join('')
-$('legend-note').textContent=l.note||''
+$('legend-bar').style.background='linear-gradient(to right,rgb(49,54,149),rgb(74,123,183),rgb(128,183,214),rgb(189,226,238),rgb(238,248,223),rgb(254,238,165),rgb(253,191,113),rgb(246,123,74),rgb(218,55,42),rgb(165,0,38))'
+$('legend-labels').innerHTML=(l.labels||[]).map((x,i,a)=>`<span style="left:${a.length===1?50:i*100/(a.length-1)}%">${x}</span>`).join('')
 }
 
 function stopPlay(){
@@ -232,9 +235,7 @@ $('product').onchange=e=>selectProduct(e.target.value)
 $('date').onchange=()=>updateLayer()
 $('hour').onchange=()=>{
 const i=hours24.indexOf($('hour').value)
-if(i>=0){
-$('time-slider').value=i
-}
+if(i>=0)$('time-slider').value=i
 updateLayer()
 }
 $('time-slider').oninput=e=>setHourByIndex(+e.target.value)
@@ -242,10 +243,7 @@ $('play').onclick=()=>{
 playing=!playing
 $('play').textContent=playing?'暂停':'播放'
 if(timer){clearInterval(timer);timer=null}
-if(playing)timer=setInterval(()=>{
-let i=(+$('time-slider').value+1)%24
-setHourByIndex(i)
-},800)
+if(playing)timer=setInterval(()=>{let i=(+$('time-slider').value+1)%24;setHourByIndex(i)},800)
 }
 $('opacity').oninput=e=>{
 $('opacity-val').textContent=e.target.value+'%'
