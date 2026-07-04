@@ -126,6 +126,7 @@ localStorage.setItem(k,JSON.stringify(v))
 vf.textContent=`访问次数：${v.count}｜最近访问：${fmtTime(v.last)}`
 }
 
+
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
 
