@@ -163,7 +163,7 @@ $('product').innerHTML=products.map(p=>`<option value="${p.id}">${p.name||p.id}<
 function selectProduct(id){
 current=products.find(p=>p.id===id)||products[0]
 if(!current)return
-$('product-desc').textContent=current.description||''
+$('product-desc').innerHTML=current.description||''
 $('date').innerHTML=(current.dates||[]).map(d=>`<option value="${d}">${d}</option>`).join('')
 $('date').value=(current.dates&&current.dates[0])||''
 $('hour').innerHTML=hours24.map(h=>`<option value="${h}">${h}</option>`).join('')
@@ -197,7 +197,7 @@ return
 const op=+$('opacity').value/100
 if(overlay)map.removeLayer(overlay)
 overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(map)
-overlay.on('load',()=>status('图层已加载：'+u))
+overlay.on('load',()=>status('当前数据：'+d+' '+h))
 overlay.on('error',()=>status('图像加载失败：'+u))
 if(fit&&current.bounds)map.fitBounds(current.bounds)
 $('info').innerHTML=`Date: ${d} ${h}`
