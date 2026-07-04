@@ -50,7 +50,7 @@ input[type=range]{accent-color:var(--accent)}
 .legend-labels span{position:absolute;top:40%;transform:translate(-50%,-50%);color:#fff;font-size:14px;line-height:1;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.72);white-space:nowrap}
 .legend-note{display:none}
 .status{position:fixed;left:16px;top:calc(var(--header-h) + 16px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:420px}
-.visit-bar{position:fixed;right:16px;top:calc(var(--header-h) + 16px);z-index:950;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--text-muted);max-width:360px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.visit-float{position:fixed;left:16px;bottom:calc(16px + 44px);z-index:950;background:rgba(22,27,34,.92);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text-muted);backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
 .leaflet-control-attribution a{color:var(--accent-h)!important}
 .time-wrap{display:flex;flex-direction:column;gap:6px}
@@ -60,7 +60,7 @@ input[type=range]{accent-color:var(--accent)}
 #time-slider::-moz-range-track{height:6px;background:#e5e7eb;border-radius:999px}
 #time-slider::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--accent)}
 .time-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);padding:0 2px}
-@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw}.visit-bar{display:none}}
+@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw}.visit-float{display:none}}
 </style>
 </head>
 <body>
@@ -97,7 +97,7 @@ input[type=range]{accent-color:var(--accent)}
 </aside>
 
 <div class="status" id="status">正在加载配置...</div>
-<div class="visit-bar" id="visit-bar">访问统计加载中...</div>
+<div class="visit-float" id="visit-float">访问统计加载中...</div>
 
 <div class="legend" id="legend" style="display:none">
   <div class="legend-row">
@@ -115,7 +115,7 @@ const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
 const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
 const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',d).replaceAll('{hour}',h):''
-const vb=$('visit-bar')
+const vf=$('visit-float')
 function fmtTime(t){return new Date(t).toLocaleString('zh-CN',{hour12:false})}
 function loadVisits(){
 const k='satview_visits'
@@ -123,7 +123,7 @@ let v=JSON.parse(localStorage.getItem(k)||'{"count":0,"last":""}')
 v.count++
 v.last=new Date().toISOString()
 localStorage.setItem(k,JSON.stringify(v))
-vb.textContent=`访问次数：${v.count}｜最近访问：${fmtTime(v.last)}`
+vf.textContent=`访问次数：${v.count}｜最近访问：${fmtTime(v.last)}`
 }
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
@@ -226,14 +226,7 @@ if(timer){clearInterval(timer);timer=null}
 $('play').textContent='播放'
 }
 
-function updateVisitBar(){
-const k='satview_visits'
-let v=JSON.parse(localStorage.getItem(k)||'{"count":0,"last":""}')
-if(v.last)vb.textContent=`访问次数：${v.count}｜最近访问：${fmtTime(v.last)}`
-}
-
 loadVisits()
-updateVisitBar()
 
 $('product').onchange=e=>{stopPlay();selectProduct(e.target.value)}
 $('date').onchange=()=>updateLayer(true)
