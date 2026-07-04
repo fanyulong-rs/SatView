@@ -5,8 +5,8 @@
   "products": [
     {
       "id": "SPM2p5",
-      "name": "细颗粒物 (PM2.5)",
-      "description": "全球逐小时PM2.5浓度",
+      "name": "细颗粒物 (PM<sub>2.5</sub>)",
+      "description": "全球逐小时PM<sub>2.5</sub>浓度",
       "unit": "μg/m³",
       "url_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/{date}/1800x3600_{date}-{hour}_SPM2p5.webp",
       "dates": ["20220101"],
@@ -14,13 +14,12 @@
       "default_hour": "H02",
       "bounds": [[-85, -180], [85, 180]],
       "legend": {
-        "title": "PM2.5 浓度",
+        "title": "PM<sub>2.5</sub>",
         "unit": "μg/m³",
         "colors": ["#0000FF","#00AAFF","#00FF80","#80FF00","#FFFF00","#FFAA00","#FF5500","#FF0000","#AA0000","#550000"],
         "labels": ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100"],
         "min": 0,
-        "max": 100,
-        "note": "原始数据 P2→0, P98→100 线性拉伸; nodata(-999)不显示"
+        "max": 100
       }
     }
   ]
