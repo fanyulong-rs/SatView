@@ -145,7 +145,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZ
 
 async function loadCountries(){
 try{
-const u='https://raw.githubusercontent.com/fanyulong-rs/SatView/main/World_Countries.geojson?ts='+Date.now()
+const u='https://raw.githubusercontent.com/fanyulong-rs/SatView/main/Countries.geojson?ts='+Date.now()
 const r=await fetch(u)
 if(!r.ok)throw new Error('World_Countries.geojson 读取失败：HTTP '+r.status)
 countryLayer=L.geoJSON(await r.json(),{style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}}).addTo(map)
