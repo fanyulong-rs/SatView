@@ -114,7 +114,8 @@ const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
 const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',d).replaceAll('{hour}',h):''
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
+// L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles &copy; Esri'})
 
 async function loadCountries(){
 try{
