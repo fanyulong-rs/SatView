@@ -197,7 +197,7 @@ return
 const op=+$('opacity').value/100
 if(overlay)map.removeLayer(overlay)
 overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(map)
-overlay.on('load',()=>status('当前数据：'+d+' '+h))
+// overlay.on('load',()=>status('当前数据：'+d+' '+h))
 overlay.on('error',()=>status('图像加载失败：'+u))
 if(fit&&current.bounds)map.fitBounds(current.bounds)
 $('info').innerHTML=`Date: ${d} ${h}`
