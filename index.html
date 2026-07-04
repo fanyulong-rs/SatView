@@ -88,6 +88,7 @@ input[type=range]{accent-color:var(--accent)}
 <div class="group"><button class="btn secondary" id="play">播放</button></div>
 <div class="group"><label>图层透明度</label><div class="range-row"><input id="opacity" type="range" min="0" max="100" value="80"><span id="opacity-val">80%</span></div></div>
 <div class="group"><label>矢量图层</label><button class="btn secondary" id="toggle-countries">国界开关：开</button></div>
+<div class="group"><button class="btn secondary" id="toggle-layer">数据开关：开</button></div>
 <div class="group"><button class="btn" id="download">下载原图</button></div>
 <div class="group"><button class="btn secondary" id="fit">缩放到图层</button></div>
 <div class="info" id="info">等待加载...</div>
@@ -107,15 +108,14 @@ input[type=range]{accent-color:var(--accent)}
 </div>
 
 <script>
-let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,timer=null,playing=false
+let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,layerVisible=true,timer=null,playing=false
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
 const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
 const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',d).replaceAll('{hour}',h):''
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
-// L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,tileSize:256,detectRetina:false,attribution:'Tiles &copy; Esri'})
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
 
 async function loadCountries(){
 try{
@@ -185,20 +185,14 @@ updateLayer(false)
 
 function updateLayer(fit=false){
 if(!current)return
+if(!layerVisible){if(overlay)map.removeLayer(overlay);return}
 const d=$('date').value,h=$('hour').value
-if(!d||!h){
-status('缺少日期或小时，无法加载图层')
-return
-}
+if(!d||!h){status('缺少日期或小时，无法加载图层');return}
 const u=urlOf(current,d,h)
-if(!u){
-status('URL 无效')
-return
-}
+if(!u){status('URL 无效');return}
 const op=+$('opacity').value/100
 if(overlay)map.removeLayer(overlay)
 overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(map)
-// overlay.on('load',()=>status('当前数据：'+d+' '+h))
 overlay.on('error',()=>status('图像加载失败：'+u))
 if(fit&&current.bounds)map.fitBounds(current.bounds)
 $('info').innerHTML=`Date: ${d} ${h}`
@@ -261,6 +255,12 @@ if(showCountries)countryLayer.addTo(map)
 else map.removeLayer(countryLayer)
 }
 syncCountryButton()
+}
+$('toggle-layer').onclick=()=>{
+layerVisible=!layerVisible
+$('toggle-layer').textContent='数据开关：'+(layerVisible?'开':'关')
+if(!layerVisible&&overlay)map.removeLayer(overlay)
+else updateLayer(false)
 }
 
 init()
