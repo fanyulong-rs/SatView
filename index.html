@@ -66,10 +66,7 @@ input[type=range]{accent-color:var(--accent)}
 <header>
 <a class="logo" href="./">
 <div class="logo-icon">🛰️</div>
-<div>
-<div class="logo-text">SatView</div>
-<div class="logo-sub">Remote Sensing Viewer</div>
-</div>
+<div><div class="logo-text">SatView</div><div class="logo-sub">Remote Sensing Viewer</div></div>
 </a>
 <div class="header-spacer"></div>
 <div class="header-badge" id="updated">Loading</div>
@@ -84,45 +81,15 @@ input[type=range]{accent-color:var(--accent)}
 <div class="panel-desc" id="product-desc">读取 products.json 中...</div>
 </div>
 <div class="panel-body">
-<div class="group">
-<label>遥感产品</label>
-<select id="product"></select>
-</div>
-<div class="group">
-<label>日期</label>
-<select id="date"></select>
-</div>
-<div class="group">
-<label>小时</label>
-<select id="hour"></select>
-</div>
-<div class="group">
-<label>时间轴</label>
-<div class="time-wrap">
-<input id="time-slider" type="range" min="0" max="23" value="0">
-<div class="time-labels"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
-</div>
-</div>
-<div class="group">
-<button class="btn secondary" id="play">播放</button>
-</div>
-<div class="group">
-<label>图层透明度</label>
-<div class="range-row">
-<input id="opacity" type="range" min="0" max="100" value="80">
-<span id="opacity-val">80%</span>
-</div>
-</div>
-<div class="group">
-<label>矢量图层</label>
-<button class="btn secondary" id="toggle-countries">国界开关：开</button>
-</div>
-<div class="group">
-<button class="btn" id="download">下载原图</button>
-</div>
-<div class="group">
-<button class="btn secondary" id="fit">缩放到图层</button>
-</div>
+<div class="group"><label>遥感产品</label><select id="product"></select></div>
+<div class="group"><label>日期</label><select id="date"></select></div>
+<div class="group"><label>小时</label><select id="hour"></select></div>
+<div class="group"><label>时间轴</label><div class="time-wrap"><input id="time-slider" type="range" min="0" max="23" value="0"><div class="time-labels"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div></div>
+<div class="group"><button class="btn secondary" id="play">播放</button></div>
+<div class="group"><label>图层透明度</label><div class="range-row"><input id="opacity" type="range" min="0" max="100" value="80"><span id="opacity-val">80%</span></div></div>
+<div class="group"><label>矢量图层</label><button class="btn secondary" id="toggle-countries">国界开关：开</button></div>
+<div class="group"><button class="btn" id="download">下载原图</button></div>
+<div class="group"><button class="btn secondary" id="fit">缩放到图层</button></div>
 <div class="info" id="info">等待加载...</div>
 </div>
 </aside>
@@ -143,8 +110,8 @@ input[type=range]{accent-color:var(--accent)}
 let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,timer=null,playing=false
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
-const urlOf=(p,d,h)=>p.url_template.replaceAll('{date}',d).replaceAll('{hour}',h)
 const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
+const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',d).replaceAll('{hour}',h):''
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
@@ -154,11 +121,18 @@ try{
 const u='https://raw.githubusercontent.com/fanyulong-rs/SatView/main/Countries.geojson?ts='+Date.now()
 const r=await fetch(u)
 if(!r.ok)throw new Error('Countries.geojson 读取失败：HTTP '+r.status)
-countryLayer=L.geoJSON(await r.json(),{style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}}).addTo(map)
+const data=await r.json()
+countryLayer=L.geoJSON(data,{style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}})
+if(showCountries)countryLayer.addTo(map)
+syncCountryButton()
 }catch(e){
 console.warn(e)
 status('国界加载失败，主图不受影响')
 }
+}
+
+function syncCountryButton(){
+$('toggle-countries').textContent='国界开关：'+(showCountries?'开':'关')
 }
 
 async function init(){
@@ -172,8 +146,8 @@ $('updated').textContent='Updated '+(cfg.updated_at||'')
 fillProducts()
 const def=products.find(p=>p.id===cfg.default_product)||products[0]
 $('product').value=def.id
-selectProduct(def.id)
 await loadCountries()
+selectProduct(def.id)
 status('配置加载完成')
 }catch(e){
 console.error(e)
@@ -188,6 +162,7 @@ $('product').innerHTML=products.map(p=>`<option value="${p.id}">${p.name||p.id}<
 
 function selectProduct(id){
 current=products.find(p=>p.id===id)||products[0]
+if(!current)return
 $('product-desc').textContent=current.description||''
 $('date').innerHTML=(current.dates||[]).map(d=>`<option value="${d}">${d}</option>`).join('')
 $('date').value=(current.dates&&current.dates[0])||''
@@ -195,8 +170,8 @@ $('hour').innerHTML=hours24.map(h=>`<option value="${h}">${h}</option>`).join(''
 const h=current.default_hour&&hours24.includes(current.default_hour)?current.default_hour:'H00'
 $('hour').value=h
 $('time-slider').value=hours24.indexOf(h)
-updateLayer()
 updateLegend()
+updateLayer(true)
 }
 
 function setHourByIndex(i){
@@ -204,17 +179,27 @@ i=(i+24)%24
 const h=hours24[i]
 $('time-slider').value=i
 $('hour').value=h
-updateLayer()
+updateLayer(false)
 }
 
-function updateLayer(){
+function updateLayer(fit=false){
 if(!current)return
-const d=$('date').value,h=$('hour').value,u=urlOf(current,d,h),op=+$('opacity').value/100
+const d=$('date').value,h=$('hour').value
+if(!d||!h){
+status('缺少日期或小时，无法加载图层')
+return
+}
+const u=urlOf(current,d,h)
+if(!u){
+status('URL 无效')
+return
+}
+const op=+$('opacity').value/100
 if(overlay)map.removeLayer(overlay)
 overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(map)
 overlay.on('load',()=>status('图层已加载：'+u))
 overlay.on('error',()=>status('图像加载失败：'+u))
-map.fitBounds(current.bounds)
+if(fit&&current.bounds)map.fitBounds(current.bounds)
 $('info').innerHTML=`Date: ${d} ${h}`
 }
 
@@ -234,12 +219,12 @@ if(timer){clearInterval(timer);timer=null}
 $('play').textContent='播放'
 }
 
-$('product').onchange=e=>selectProduct(e.target.value)
-$('date').onchange=()=>updateLayer()
+$('product').onchange=e=>{stopPlay();selectProduct(e.target.value)}
+$('date').onchange=()=>updateLayer(true)
 $('hour').onchange=()=>{
 const i=hours24.indexOf($('hour').value)
 if(i>=0)$('time-slider').value=i
-updateLayer()
+updateLayer(false)
 }
 $('time-slider').oninput=e=>setHourByIndex(+e.target.value)
 $('play').onclick=()=>{
@@ -253,13 +238,15 @@ $('opacity-val').textContent=e.target.value+'%'
 if(overlay)overlay.setOpacity(+e.target.value/100)
 }
 $('download').onclick=()=>{
-if(!current)return
+if(!current)return status('没有可下载的图层')
+const d=$('date').value,h=$('hour').value,u=urlOf(current,d,h)
+if(!u)return status('缺少下载地址')
 const a=document.createElement('a')
-a.href=urlOf(current,$('date').value,$('hour').value)
-a.download=a.href.split('/').pop()
+a.href=u
+a.download=u.split('/').pop()
 a.click()
 }
-$('fit').onclick=()=>current&&map.fitBounds(current.bounds)
+$('fit').onclick=()=>current&&current.bounds&&map.fitBounds(current.bounds)
 $('panel-toggle').onclick=()=>{
 $('panel').classList.toggle('collapsed')
 $('panel-toggle').classList.toggle('collapsed')
@@ -272,7 +259,7 @@ if(countryLayer){
 if(showCountries)countryLayer.addTo(map)
 else map.removeLayer(countryLayer)
 }
-$('toggle-countries').textContent='国界开关：'+(showCountries?'开':'关')
+syncCountryButton()
 }
 
 init()

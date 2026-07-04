@@ -21,6 +21,29 @@
         "min": 0,
         "max": 100
       }
+    },
+
+    {
+      "id": "SPM2p5",
+      "name": "粗颗粒物 (PM<sub>10</sub>)",
+      "description": "全球逐小时PM<sub>10</sub>浓度",
+      "unit": "μg/m³",
+      "url_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/{date}/1800x3600_{date}-{hour}_SPM2p5.webp",
+      "dates": ["20220101", "20221001"],
+      "hours": ["H00","H01","H02","H03","H04","H05","H06","H07","H08","H09","H10","H11","H12","H13","H14","H15","H16","H17","H18","H19","H20","H21","H22","H23"],
+      "default_hour": "H02",
+      "bounds": [[-85, -180], [85, 180]],
+      "legend": {
+        "title": "PM<sub>2.5</sub>",
+        "unit": "(μg/m³)",
+        "colors": ["#0000FF","#00AAFF","#00FF80","#80FF00","#FFFF00","#FFAA00","#FF5500","#FF0000","#AA0000","#550000"],
+        "labels": ["10", "20", "30", "40", "50", "60", "70", "80", "90"],
+        "min": 0,
+        "max": 100
+      }
     }
+
   ]
+
+  
 }
