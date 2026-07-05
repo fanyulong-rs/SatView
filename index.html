@@ -253,6 +253,11 @@ if(Array.isArray(data.records))return data.records
 return []
 }
 
+function getHourFromDate(v){
+const d=new Date(+v)
+return 'H'+String(d.getUTCHours()).padStart(2,'0')
+}
+
 async function loadMeas(){
 if(!current)return
 const d=$('date').value
