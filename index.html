@@ -135,8 +135,8 @@ if(v<=150.4)return '#fdae61'
 return '#d7191c'
 }
 function getHourFromDate(v){
-const d=new Date(v)
-return 'H'+String(d.getHours()).padStart(2,'0')
+const d=new Date(+v)
+return 'H'+String(d.getUTCHours()).padStart(2,'0')
 }
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
@@ -275,23 +275,19 @@ function drawMeas(data){
 if(measLayer)map.removeLayer(measLayer)
 if(!showMeas||!data){measLayer=null;return}
 const records=normalizeRecords(data)
-const h=$('hour').value
-const pts=records.filter(x=>{
-if(x.Lat==null||x.Lon==null)return false
-if(x.Date==null)return false
-return getHourFromDate(x.Date)===h
-})
 const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s.Site||s.site||s.id,s]))
-measLayer=L.layerGroup(pts.map(x=>{
+const h=$('hour').value
+const use=records.map(x=>{
 const s=stmap.get(x.Site||x.site||x.id)||{}
-const lat=+(x.Lat??s.Lat??s.lat)
-const lon=+(x.Lon??s.Lon??s.lon)
+const lat=+(s.Lat??s.lat??s.latitude??s.Latitude)
+const lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude)
 const v=+(x.PM2p5??x.value??x.val)
 if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
-return L.circleMarker([lat,lon],{radius:Math.max(3,Math.min(10,2+Math.sqrt(v||0))),color:'#fff',weight:1,fillColor:pmColor(v),fillOpacity:.9}).bindPopup(`Site: ${x.Site||x.site||x.id||''}<br>PM2.5: ${v}<br>Date: ${new Date(x.Date).toLocaleString('zh-CN',{hour12:false})}`)
-}).filter(Boolean))
-measLayer.addTo(map)
-$('info').innerHTML=`Date: ${$('date').value} ${h}<br>观测: ${pts.length} 个点`
+if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
+return {lat,lon,v,x}
+}).filter(Boolean)
+measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:Math.max(3,Math.min(10,2+Math.sqrt(o.v||0))),color:'#fff',weight:1,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>PM2.5: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('zh-CN',{hour12:false}):''}`))).addTo(map)
+$('info').innerHTML=`Date: ${$('date').value} ${h}<br>观测: ${use.length} 个点`
 }
 
 function stopPlay(){
