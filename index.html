@@ -8,7 +8,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d1117;--surface:#161b22;--surface2:#1f2937;--border:rgba(255,255,255,.08);--accent:#3b82f6;--accent-h:#60a5fa;--text:#e6edf3;--text-muted:#8b949e;--radius:10px;--panel-w:300px;--header-h:52px}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#1f2937;--border:rgba(255,255,255,.08);--accent:#3b82f6;--accent-h:#60a5fa;--text:#e6edf3;--text-muted:#8b949e;--radius:10px;--panel-w:320px;--header-h:52px}
 html,body{height:100%;font-family:'Segoe UI','PingFang SC','Hiragino Sans GB',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
 header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:rgba(13,17,23,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:1100}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
@@ -48,7 +48,6 @@ input[type=range]{accent-color:var(--accent)}
 .legend-bar{height:26px;border-radius:999px;width:100%}
 .legend-labels{position:absolute;left:0;right:0;top:0;height:34px;pointer-events:none}
 .legend-labels span{position:absolute;top:40%;transform:translate(-50%,-50%);color:#fff;font-size:14px;line-height:1;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.72);white-space:nowrap}
-.legend-note{display:none}
 .status{position:fixed;left:16px;top:calc(var(--header-h) + 16px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:420px}
 .visit-float{position:fixed;left:16px;bottom:calc(16px + 44px);z-index:950;background:rgba(22,27,34,.92);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text-muted);backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
@@ -90,6 +89,8 @@ input[type=range]{accent-color:var(--accent)}
 <div class="group"><label>图层透明度</label><div class="range-row"><input id="opacity" type="range" min="0" max="100" value="80"><span id="opacity-val">80%</span></div></div>
 <div class="group"><label>矢量图层</label><button class="btn secondary" id="toggle-countries">国界开关：开</button></div>
 <div class="group"><button class="btn secondary" id="toggle-layer">数据开关：开</button></div>
+<div class="group"><label>站点观测</label><button class="btn secondary" id="toggle-meas">观测开关：开</button></div>
+<div class="group"><button class="btn secondary" id="load-meas">加载观测</button></div>
 <div class="group"><button class="btn" id="download">下载原图</button></div>
 <div class="group"><button class="btn secondary" id="fit">缩放到图层</button></div>
 <div class="info" id="info">等待加载...</div>
@@ -110,7 +111,7 @@ input[type=range]{accent-color:var(--accent)}
 </div>
 
 <script>
-let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,layerVisible=true,timer=null,playing=false
+let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,layerVisible=true,timer=null,playing=false,measLayer=null,showMeas=true,measCache={},stationsCache=null
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
 const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
@@ -125,7 +126,18 @@ v.last=new Date().toISOString()
 localStorage.setItem(k,JSON.stringify(v))
 vf.textContent=`访问次数：${v.count}｜最近访问：${fmtTime(v.last)}`
 }
-
+function pmColor(v){
+if(v==null||isNaN(v))return '#999'
+if(v<=12)return '#2b83ba'
+if(v<=35.4)return '#abdda4'
+if(v<=55.4)return '#ffffbf'
+if(v<=150.4)return '#fdae61'
+return '#d7191c'
+}
+function getHourFromDate(v){
+const d=new Date(v)
+return 'H'+String(d.getHours()).padStart(2,'0')
+}
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,105],3)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
@@ -180,12 +192,12 @@ if(!current)return
 $('product-desc').innerHTML=current.description||''
 $('date').innerHTML=(current.dates||[]).map(d=>`<option value="${d}">${d}</option>`).join('')
 $('date').value=(current.dates&&current.dates[0])||''
-$('hour').innerHTML=hours24.map(h=>`<option value="${h}">${h}</option>`).join('')
-const h=current.default_hour&&hours24.includes(current.default_hour)?current.default_hour:'H00'
+$('hour').innerHTML=(current.hours&&current.hours.length?current.hours:hours24).map(h=>`<option value="${h}">${h}</option>`).join('')
+const h=current.default_hour&&($('hour').querySelector(`option[value="${current.default_hour}"]`))?current.default_hour:($('hour').value||'H00')
 $('hour').value=h
 $('time-slider').value=hours24.indexOf(h)
 updateLegend()
-updateLayer(true)
+loadStations().then(()=>{updateLayer(true);loadMeas()})
 }
 
 function setHourByIndex(i){
@@ -194,6 +206,7 @@ const h=hours24[i]
 $('time-slider').value=i
 $('hour').value=h
 updateLayer(false)
+if(measCache[$('date').value])drawMeas(measCache[$('date').value])
 }
 
 function updateLayer(fit=false){
@@ -216,9 +229,69 @@ const l=current?.legend
 if(!l){$('legend').style.display='none';return}
 $('legend').style.display='block'
 $('legend-title').innerHTML=(l.title||current.name||current.id)+(l.unit?' '+l.unit:'')
-$('legend-bar').style.background='linear-gradient(to right,rgb(49,54,149),rgb(74,123,183),rgb(128,183,214),rgb(189,226,238),rgb(238,248,223),rgb(254,238,165),rgb(253,191,113),rgb(246,123,74),rgb(218,55,42),rgb(165,0,38))'
-const labels=['10','20','30','40','50','60','70','80','90']
+$('legend-bar').style.background='linear-gradient(to right,'+(l.colors||[]).join(',')+')'
+const labels=l.labels||[]
 $('legend-labels').innerHTML=labels.map((x,i)=>`<span style="left:${(i+1)*10}%">${x}</span>`).join('')
+}
+
+async function loadStations(){
+if(stationsCache||!current||!current.stations_url)return
+try{
+const r=await fetch(current.stations_url+'?ts='+Date.now())
+if(!r.ok)throw new Error('站点读取失败：HTTP '+r.status)
+stationsCache=await r.json()
+}catch(e){
+console.error(e)
+status(e.message)
+}
+}
+
+function normalizeRecords(data){
+if(Array.isArray(data))return data
+if(Array.isArray(data.records))return data.records
+return []
+}
+
+async function loadMeas(){
+if(!current)return
+const d=$('date').value
+if(!d)return
+if(measCache[d]){drawMeas(measCache[d]);return}
+try{
+const u=current.meas_template
+if(!u)return
+const r=await fetch(u.replaceAll('{date}',d)+'?ts='+Date.now())
+if(!r.ok)throw new Error('观测读取失败：HTTP '+r.status)
+const data=await r.json()
+measCache[d]=data
+drawMeas(data)
+}catch(e){
+console.error(e)
+status(e.message)
+}
+}
+
+function drawMeas(data){
+if(measLayer)map.removeLayer(measLayer)
+if(!showMeas||!data){measLayer=null;return}
+const records=normalizeRecords(data)
+const h=$('hour').value
+const pts=records.filter(x=>{
+if(x.Lat==null||x.Lon==null)return false
+if(x.Date==null)return false
+return getHourFromDate(x.Date)===h
+})
+const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s.Site||s.site||s.id,s]))
+measLayer=L.layerGroup(pts.map(x=>{
+const s=stmap.get(x.Site||x.site||x.id)||{}
+const lat=+(x.Lat??s.Lat??s.lat)
+const lon=+(x.Lon??s.Lon??s.lon)
+const v=+(x.PM2p5??x.value??x.val)
+if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
+return L.circleMarker([lat,lon],{radius:Math.max(3,Math.min(10,2+Math.sqrt(v||0))),color:'#fff',weight:1,fillColor:pmColor(v),fillOpacity:.9}).bindPopup(`Site: ${x.Site||x.site||x.id||''}<br>PM2.5: ${v}<br>Date: ${new Date(x.Date).toLocaleString('zh-CN',{hour12:false})}`)
+}).filter(Boolean))
+measLayer.addTo(map)
+$('info').innerHTML=`Date: ${$('date').value} ${h}<br>观测: ${pts.length} 个点`
 }
 
 function stopPlay(){
@@ -229,12 +302,13 @@ $('play').textContent='播放'
 
 loadVisits()
 
-$('product').onchange=e=>{stopPlay();selectProduct(e.target.value)}
-$('date').onchange=()=>updateLayer(true)
+$('product').onchange=e=>{stopPlay();stationsCache=null;measCache={};selectProduct(e.target.value)}
+$('date').onchange=()=>{updateLayer(true);loadMeas()}
 $('hour').onchange=()=>{
 const i=hours24.indexOf($('hour').value)
 if(i>=0)$('time-slider').value=i
 updateLayer(false)
+if(measCache[$('date').value])drawMeas(measCache[$('date').value])
 }
 $('time-slider').oninput=e=>setHourByIndex(+e.target.value)
 $('play').onclick=()=>{
@@ -277,6 +351,14 @@ $('toggle-layer').textContent='数据开关：'+(layerVisible?'开':'关')
 if(!layerVisible&&overlay)map.removeLayer(overlay)
 else updateLayer(false)
 }
+$('toggle-meas').onclick=()=>{
+showMeas=!showMeas
+$('toggle-meas').textContent='观测开关：'+(showMeas?'开':'关')
+if(showMeas){
+if(measCache[$('date').value])drawMeas(measCache[$('date').value]);else loadMeas()
+}else if(measLayer)map.removeLayer(measLayer)
+}
+$('load-meas').onclick=loadMeas
 
 init()
 </script>
