@@ -292,7 +292,7 @@ if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
 if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
 return {lat,lon,v,x}
 }).filter(Boolean)
-measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>PM2.5: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('zh-CN',{hour12:false}):''}`))).addTo(map)
+measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>PM2.5: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('zh-CN',{hour12:false}):''}`))).addTo(map)
 $('info').innerHTML=`Date: ${$('date').value} ${h}<br>观测: ${use.length} 个点`
 }
 
