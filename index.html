@@ -30,10 +30,9 @@ header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:rgb
 .panel-body{flex:1;overflow:auto;padding:18px}
 .group{margin-bottom:18px}
 label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:8px}
-select,input[type=range],input[type=date]{width:100%}
-select,input[type=date]{height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:0 10px;outline:0}
-select:focus,input[type=date]:focus{border-color:var(--accent)}
-input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.8}
+select,input[type=range]{width:100%}
+select{height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:0 10px;outline:0}
+select:focus{border-color:var(--accent)}
 .range-row{display:flex;align-items:center;gap:10px}
 .range-row span{width:42px;text-align:right;font-size:12px;color:var(--text-muted)}
 input[type=range]{accent-color:var(--accent)}
@@ -50,20 +49,22 @@ input[type=range]{accent-color:var(--accent)}
 .legend-labels{position:absolute;left:0;right:0;top:0;height:34px;pointer-events:none}
 .legend-labels span{position:absolute;top:40%;transform:translate(-50%,-50%);color:#fff;font-size:14px;line-height:1;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.72);white-space:nowrap}
 .status{position:fixed;left:16px;top:calc(var(--header-h) + 16px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:420px}
-.visit-float{position:fixed;left:16px;bottom:calc(16px + 44px);z-index:950;background:rgba(22,27,34,.92);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text-muted);backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.visit-float{position:fixed;left:16px;bottom:16px;z-index:950;background:rgba(22,27,34,.92);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text-muted);backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
 .leaflet-control-attribution a{color:var(--accent-h)!important}
-.time-card{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 6px 20px rgba(0,0,0,.14);color:#111}
-.time-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.play-main{width:42px;height:42px;border-radius:11px;border:0;background:#4f73d9;color:#fff;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
-.play-main:hover{background:#6f8df0}
-.time-current{font-size:20px;font-weight:500;letter-spacing:.1px;white-space:nowrap;flex:1}
-#time-slider{width:100%;height:18px;appearance:none;-webkit-appearance:none;background:transparent}
+.time-float{position:fixed;left:16px;bottom:72px;z-index:960;width:390px;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 28px rgba(0,0,0,.18);color:#111}
+.time-current{font-size:22px;font-weight:600;margin-bottom:10px;white-space:nowrap}
+.date-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.date-row select{height:34px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;color:#111;font-size:13px;padding:0 8px}
+.time-row{display:flex;align-items:center;gap:12px}
+.play-main{width:40px;height:40px;border-radius:10px;border:0;background:#5f6edb;color:#fff;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.play-main:hover{background:#7080ef}
+#time-slider{width:100%;height:20px;appearance:none;-webkit-appearance:none;background:transparent}
 #time-slider::-webkit-slider-runnable-track{height:6px;background:#e5e7eb;border-radius:999px}
 #time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#5f6edb;margin-top:-8px;border:0}
 #time-slider::-moz-range-track{height:6px;background:#e5e7eb;border-radius:999px}
 #time-slider::-moz-range-thumb{width:22px;height:22px;border:none;border-radius:50%;background:#5f6edb}
-@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw}.visit-float{display:none}.time-current{font-size:18px}.time-date{width:130px;font-size:14px}.time-card{padding:12px}.play-main{width:44px;height:44px}}
+@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw}.visit-float{display:none}.time-float{left:12px;right:12px;bottom:16px;width:auto}.time-current{font-size:18px}}
 </style>
 </head>
 <body>
@@ -86,17 +87,6 @@ input[type=range]{accent-color:var(--accent)}
 </div>
 <div class="panel-body">
 <div class="group"><label>Remote Sensing Product</label><select id="product"></select></div>
-<div class="group">
-<label>Time</label>
-<div class="time-card">
-<div class="time-top">
-<button class="play-main" id="play">▶</button>
-<div class="time-current" id="time-current">---- -- -- --:00</div>
-<input id="date" class="time-date" type="date">
-</div>
-<input id="time-slider" type="range" min="0" max="23" value="0">
-</div>
-</div>
 <div class="group"><label>Layer Opacity</label><div class="range-row"><input id="opacity" type="range" min="0" max="100" value="80"><span id="opacity-val">80%</span></div></div>
 <div class="group"><label>Vector Layer</label><button class="btn secondary" id="toggle-countries">Countries: On</button></div>
 <div class="group"><button class="btn secondary" id="toggle-layer">Data Layer: On</button></div>
@@ -107,6 +97,19 @@ input[type=range]{accent-color:var(--accent)}
 <div class="info" id="info">Waiting for loading...</div>
 </div>
 </aside>
+
+<div class="time-float">
+<div class="time-current" id="time-current">---- -- -- --:00</div>
+<div class="date-row">
+<select id="year"></select>
+<select id="month"></select>
+<select id="day"></select>
+</div>
+<div class="time-row">
+<button class="play-main" id="play">▶</button>
+<input id="time-slider" type="range" min="0" max="23" value="0">
+</div>
+</div>
 
 <div class="status" id="status">Loading configuration...</div>
 <div class="visit-float" id="visit-float">Loading visits...</div>
@@ -128,15 +131,47 @@ const status=t=>$('status').textContent=t
 const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
 const pad=n=>String(n).padStart(2,'0')
 const dateCompact=s=>String(s||'').replaceAll('-','')
-const dateDash=s=>{s=String(s||'');return /^\d{8}$/.test(s)?`${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`:s}
+const dateValue=()=>`${$('year').value}${$('month').value}${$('day').value}`
+const dateLabel=()=>`${$('year').value}-${$('month').value}-${$('day').value}`
 const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',dateCompact(d)).replaceAll('{hour}',h):''
+const uniq=a=>[...new Set(a)]
+const daysInMonth=(y,m)=>new Date(+y,+m,0).getDate()
 const vf=$('visit-float')
+
 function fmtTime(t){return new Date(t).toLocaleString('en-GB',{hour12:false})}
+
 function updateTimeText(){
-const d=$('date').value||'---- -- --'
 const i=+$('time-slider').value||0
-$('time-current').textContent=`${d} ${pad(i)}:00`
+$('time-current').textContent=`${dateLabel()} ${pad(i)}:00`
 }
+
+function fillDateControls(ds){
+ds=(ds||[]).map(String).filter(d=>/^\d{8}$/.test(d))
+const ys=uniq(ds.map(d=>d.slice(0,4)))
+$('year').innerHTML=ys.map(y=>`<option value="${y}">${y}</option>`).join('')
+$('year').value=ys[0]||''
+fillMonths(ds)
+}
+
+function fillMonths(ds){
+ds=(ds||[]).map(String).filter(d=>/^\d{8}$/.test(d))
+const y=$('year').value
+const ms=uniq(ds.filter(d=>d.slice(0,4)===y).map(d=>d.slice(4,6)))
+$('month').innerHTML=ms.map(m=>`<option value="${m}">${m}</option>`).join('')
+$('month').value=ms[0]||'01'
+fillDays(ds)
+}
+
+function fillDays(ds){
+ds=(ds||[]).map(String).filter(d=>/^\d{8}$/.test(d))
+const y=$('year').value,m=$('month').value
+let days=ds.filter(d=>d.slice(0,4)===y&&d.slice(4,6)===m).map(d=>d.slice(6,8))
+if(!days.length)days=[...Array(daysInMonth(y,m)||31)].map((_,i)=>String(i+1).padStart(2,'0'))
+days=uniq(days)
+$('day').innerHTML=days.map(d=>`<option value="${d}">${d}</option>`).join('')
+$('day').value=days[0]||'01'
+}
+
 function loadVisits(){
 const k='satview_visits'
 let v=JSON.parse(localStorage.getItem(k)||'{"count":0,"last":""}')
@@ -145,6 +180,7 @@ v.last=new Date().toISOString()
 localStorage.setItem(k,JSON.stringify(v))
 vf.textContent=`Visits: ${v.count} | Last visit: ${fmtTime(v.last)}`
 }
+
 function pmColor(v){
 if(v==null||isNaN(v))return '#999'
 const cs=[[0,[49,54,149]],[10,[74,123,183]],[20,[128,183,214]],[35,[189,226,238]],[50,[238,248,223]],[60,[254,238,165]],[70,[253,191,113]],[80,[246,123,74]],[90,[218,55,42]],[100,[165,0,38]]]
@@ -210,10 +246,7 @@ function selectProduct(id){
 current=products.find(p=>p.id===id)||products[0]
 if(!current)return
 $('product-desc').innerHTML=current.description||''
-const ds=current.dates||[]
-$('date').min=ds.length?dateDash(ds.at(-1)):''
-$('date').max=ds.length?dateDash(ds[0]):''
-$('date').value=ds.length?dateDash(ds[0]):''
+fillDateControls(current.dates||[])
 $('time-slider').value=0
 updateTimeText()
 updateLegend()
@@ -222,17 +255,16 @@ loadStations().then(()=>{updateLayer(true);loadMeas()})
 
 function setHourByIndex(i){
 i=(i+24)%24
-const h=hours24[i]
 $('time-slider').value=i
 updateTimeText()
 updateLayer(false)
-if(measCache[$('date').value])drawMeas(measCache[$('date').value])
+if(measCache[dateValue()])drawMeas(measCache[dateValue()])
 }
 
 function updateLayer(fit=false){
 if(!current)return
 if(!layerVisible){if(overlay)map.removeLayer(overlay);return}
-const d=$('date').value,h=hours24[+$('time-slider').value||0]
+const d=dateValue(),h=hours24[+$('time-slider').value||0]
 if(!d||!h){status('Missing date or hour');return}
 const u=urlOf(current,d,h)
 if(!u){status('Invalid URL');return}
@@ -241,7 +273,7 @@ if(overlay)map.removeLayer(overlay)
 overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(map)
 overlay.on('error',()=>status('Failed to load image: '+u))
 if(fit&&current.bounds)map.fitBounds(current.bounds)
-$('info').innerHTML=`Date: ${d} ${h.slice(1)}:00`
+$('info').innerHTML=`Date: ${dateLabel()} ${h.slice(1)}:00`
 }
 
 function updateLegend(){
@@ -279,9 +311,8 @@ return 'H'+String(d.getUTCHours()).padStart(2,'0')
 
 async function loadMeas(){
 if(!current)return
-const d=$('date').value
-if(!d)return
-const key=dateCompact(d)
+const key=dateValue()
+if(!key)return
 if(measCache[key]){drawMeas(measCache[key]);return}
 try{
 const u=current.meas_template
@@ -313,7 +344,7 @@ if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
 return {lat,lon,v,x}
 }).filter(Boolean)
 measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>PM2.5: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('en-GB',{hour12:false}):''}`))).addTo(map)
-$('info').innerHTML=`Date: ${$('date').value} ${h.slice(1)}:00<br>Observations: ${use.length} points`
+$('info').innerHTML=`Date: ${dateLabel()} ${h.slice(1)}:00<br>Observations: ${use.length} points`
 }
 
 function stopPlay(){
@@ -325,7 +356,9 @@ $('play').textContent='▶'
 loadVisits()
 
 $('product').onchange=e=>{stopPlay();stationsCache=null;measCache={};selectProduct(e.target.value)}
-$('date').onchange=()=>{updateTimeText();updateLayer(true);loadMeas()}
+$('year').onchange=()=>{fillMonths(current.dates||[]);updateTimeText();updateLayer(true);loadMeas()}
+$('month').onchange=()=>{fillDays(current.dates||[]);updateTimeText();updateLayer(true);loadMeas()}
+$('day').onchange=()=>{updateTimeText();updateLayer(true);loadMeas()}
 $('time-slider').oninput=e=>setHourByIndex(+e.target.value)
 $('play').onclick=()=>{
 playing=!playing
@@ -339,7 +372,7 @@ if(overlay)overlay.setOpacity(+e.target.value/100)
 }
 $('download').onclick=()=>{
 if(!current)return status('No layer to download')
-const d=$('date').value,h=hours24[+$('time-slider').value||0],u=urlOf(current,d,h)
+const d=dateValue(),h=hours24[+$('time-slider').value||0],u=urlOf(current,d,h)
 if(!u)return status('Missing download URL')
 const a=document.createElement('a')
 a.href=u
@@ -370,7 +403,7 @@ else updateLayer(false)
 $('toggle-meas').onclick=()=>{
 showMeas=!showMeas
 $('toggle-meas').textContent='Observations: '+(showMeas?'On':'Off')
-const key=dateCompact($('date').value)
+const key=dateValue()
 if(showMeas){
 if(measCache[key])drawMeas(measCache[key]);else loadMeas()
 }else if(measLayer)map.removeLayer(measLayer)
