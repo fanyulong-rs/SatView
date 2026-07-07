@@ -44,27 +44,27 @@ input[type=range]{accent-color:var(--accent)}
 .legend{position:fixed;left:16px;bottom:16px;z-index:900;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:26px;padding:10px 14px;min-width:680px;max-width:1100px;box-shadow:0 6px 24px rgba(0,0,0,.12);color:#111}
 .legend-row{display:flex;align-items:center;gap:14px;width:100%}
 .legend-title{font-size:16px;font-weight:800;white-space:nowrap;color:#111;line-height:1;flex:0 0 auto;margin:0}
-.legend-bar-wrap{position:relative;flex:1;height:26px}
-.legend-bar{height:26px;border-radius:999px;width:100%}
-.legend-labels{position:absolute;left:0;right:0;top:0;height:34px;pointer-events:none}
-.legend-labels span{position:absolute;top:40%;transform:translate(-50%,-50%);color:#fff;font-size:14px;line-height:1;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.72);white-space:nowrap}
+.legend-bar-wrap{position:relative;flex:1;height:22px}
+.legend-bar{height:22px;border-radius:999px;width:100%}
+.legend-labels{position:absolute;left:0;right:0;top:0;height:28px;pointer-events:none}
+.legend-labels span{position:absolute;top:42%;transform:translate(-50%,-50%);color:#fff;font-size:13px;line-height:1;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.72);white-space:nowrap}
 .status{position:fixed;left:16px;top:calc(var(--header-h) + 16px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:420px}
 .visit-float{position:fixed;left:16px;bottom:16px;z-index:950;background:rgba(22,27,34,.92);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text-muted);backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
 .leaflet-control-attribution a{color:var(--accent-h)!important}
-.time-float{position:fixed;left:16px;bottom:72px;z-index:960;width:390px;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 28px rgba(0,0,0,.18);color:#111}
-.time-current{font-size:22px;font-weight:600;margin-bottom:10px;white-space:nowrap}
-.date-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.date-row select{height:34px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;color:#111;font-size:13px;padding:0 8px}
-.time-row{display:flex;align-items:center;gap:12px}
-.play-main{width:40px;height:40px;border-radius:10px;border:0;background:#5f6edb;color:#fff;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.time-float{position:fixed;left:16px;bottom:72px;z-index:960;width:350px;background:#fff;border-radius:14px;padding:11px 13px;box-shadow:0 8px 26px rgba(0,0,0,.18);color:#111}
+.time-current{font-size:19px;font-weight:600;margin-bottom:8px;white-space:nowrap}
+.date-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:7px;margin-bottom:9px}
+.date-row select{height:30px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:7px;color:#111;font-size:12px;padding:0 6px}
+.time-row{display:flex;align-items:center;gap:10px}
+.play-main{width:32px;height:32px;border-radius:8px;border:0;background:#5f6edb;color:#fff;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
 .play-main:hover{background:#7080ef}
-#time-slider{width:100%;height:20px;appearance:none;-webkit-appearance:none;background:transparent}
-#time-slider::-webkit-slider-runnable-track{height:6px;background:#e5e7eb;border-radius:999px}
-#time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#5f6edb;margin-top:-8px;border:0}
-#time-slider::-moz-range-track{height:6px;background:#e5e7eb;border-radius:999px}
-#time-slider::-moz-range-thumb{width:22px;height:22px;border:none;border-radius:50%;background:#5f6edb}
-@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw}.visit-float{display:none}.time-float{left:12px;right:12px;bottom:16px;width:auto}.time-current{font-size:18px}}
+#time-slider{width:100%;height:14px;appearance:none;-webkit-appearance:none;background:transparent}
+#time-slider::-webkit-slider-runnable-track{height:4px;background:#e5e7eb;border-radius:999px}
+#time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#5f6edb;margin-top:-6px;border:0}
+#time-slider::-moz-range-track{height:4px;background:#e5e7eb;border-radius:999px}
+#time-slider::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:#5f6edb}
+@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw}.visit-float{display:none}.time-float{left:12px;right:12px;bottom:16px;width:auto}.time-current{font-size:17px}}
 </style>
 </head>
 <body>
@@ -76,10 +76,8 @@ input[type=range]{accent-color:var(--accent)}
 <div class="header-spacer"></div>
 <div class="header-badge" id="updated">Loading</div>
 </header>
-
 <div id="map"></div>
 <button id="panel-toggle">›</button>
-
 <aside id="panel">
 <div class="panel-head">
 <div class="panel-title">Product Control</div>
@@ -97,33 +95,14 @@ input[type=range]{accent-color:var(--accent)}
 <div class="info" id="info">Waiting for loading...</div>
 </div>
 </aside>
-
 <div class="time-float">
 <div class="time-current" id="time-current">---- -- -- --:00</div>
-<div class="date-row">
-<select id="year"></select>
-<select id="month"></select>
-<select id="day"></select>
+<div class="date-row"><select id="year"></select><select id="month"></select><select id="day"></select></div>
+<div class="time-row"><button class="play-main" id="play">▶</button><input id="time-slider" type="range" min="0" max="23" value="0"></div>
 </div>
-<div class="time-row">
-<button class="play-main" id="play">▶</button>
-<input id="time-slider" type="range" min="0" max="23" value="0">
-</div>
-</div>
-
 <div class="status" id="status">Loading configuration...</div>
 <div class="visit-float" id="visit-float">Loading visits...</div>
-
-<div class="legend" id="legend" style="display:none">
-<div class="legend-row">
-<div class="legend-title" id="legend-title"></div>
-<div class="legend-bar-wrap">
-<div class="legend-bar" id="legend-bar"></div>
-<div class="legend-labels" id="legend-labels"></div>
-</div>
-</div>
-</div>
-
+<div class="legend" id="legend" style="display:none"><div class="legend-row"><div class="legend-title" id="legend-title"></div><div class="legend-bar-wrap"><div class="legend-bar" id="legend-bar"></div><div class="legend-labels" id="legend-labels"></div></div></div></div>
 <script>
 let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,layerVisible=true,timer=null,playing=false,measLayer=null,showMeas=true,measCache={},stationsCache=null
 const $=id=>document.getElementById(id)
@@ -134,64 +113,41 @@ const dateCompact=s=>String(s||'').replaceAll('-','')
 const dateValue=()=>`${$('year').value}${$('month').value}${$('day').value}`
 const dateLabel=()=>`${$('year').value}-${$('month').value}-${$('day').value}`
 const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',dateCompact(d)).replaceAll('{hour}',h):''
-const uniq=a=>[...new Set(a)]
 const daysInMonth=(y,m)=>new Date(+y,+m,0).getDate()
 const vf=$('visit-float')
 
 function fmtTime(t){return new Date(t).toLocaleString('en-GB',{hour12:false})}
-
-function updateTimeText(){
-const i=+$('time-slider').value||0
-$('time-current').textContent=`${dateLabel()} ${pad(i)}:00`
+function updateTimeText(){const i=+$('time-slider').value||0;$('time-current').textContent=`${dateLabel()} ${pad(i)}:00`}
+function fillDateControls(){
+const years=[2022,2023,2024,2025,2026]
+$('year').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('')
+$('year').value='2022'
+fillMonths()
 }
-
-function fillDateControls(ds){
-ds=(ds||[]).map(String).filter(d=>/^\d{8}$/.test(d))
-const ys=uniq(ds.map(d=>d.slice(0,4)))
-$('year').innerHTML=ys.map(y=>`<option value="${y}">${y}</option>`).join('')
-$('year').value=ys[0]||''
-fillMonths(ds)
-}
-
-function fillMonths(ds){
-ds=(ds||[]).map(String).filter(d=>/^\d{8}$/.test(d))
-const y=$('year').value
-const ms=uniq(ds.filter(d=>d.slice(0,4)===y).map(d=>d.slice(4,6)))
+function fillMonths(){
+const old=$('month').value
+const ms=[...Array(12)].map((_,i)=>String(i+1).padStart(2,'0'))
 $('month').innerHTML=ms.map(m=>`<option value="${m}">${m}</option>`).join('')
-$('month').value=ms[0]||'01'
-fillDays(ds)
+$('month').value=ms.includes(old)?old:'01'
+fillDays()
 }
-
-function fillDays(ds){
-ds=(ds||[]).map(String).filter(d=>/^\d{8}$/.test(d))
-const y=$('year').value,m=$('month').value
-let days=ds.filter(d=>d.slice(0,4)===y&&d.slice(4,6)===m).map(d=>d.slice(6,8))
-if(!days.length)days=[...Array(daysInMonth(y,m)||31)].map((_,i)=>String(i+1).padStart(2,'0'))
-days=uniq(days)
-$('day').innerHTML=days.map(d=>`<option value="${d}">${d}</option>`).join('')
-$('day').value=days[0]||'01'
+function fillDays(){
+const y=$('year').value,m=$('month').value,old=$('day').value,n=daysInMonth(y,m)
+const ds=[...Array(n)].map((_,i)=>String(i+1).padStart(2,'0'))
+$('day').innerHTML=ds.map(d=>`<option value="${d}">${d}</option>`).join('')
+$('day').value=ds.includes(old)?old:'01'
 }
-
 function loadVisits(){
 const k='satview_visits'
 let v=JSON.parse(localStorage.getItem(k)||'{"count":0,"last":""}')
-v.count++
-v.last=new Date().toISOString()
-localStorage.setItem(k,JSON.stringify(v))
+v.count++;v.last=new Date().toISOString();localStorage.setItem(k,JSON.stringify(v))
 vf.textContent=`Visits: ${v.count} | Last visit: ${fmtTime(v.last)}`
 }
-
 function pmColor(v){
 if(v==null||isNaN(v))return '#999'
 const cs=[[0,[49,54,149]],[10,[74,123,183]],[20,[128,183,214]],[35,[189,226,238]],[50,[238,248,223]],[60,[254,238,165]],[70,[253,191,113]],[80,[246,123,74]],[90,[218,55,42]],[100,[165,0,38]]]
 if(v<=cs[0][0])return `rgb(${cs[0][1].join(',')})`
-for(let i=1;i<cs.length;i++){
-if(v<=cs[i][0]){
-const [x0,c0]=cs[i-1],[x1,c1]=cs[i]
-const t=(v-x0)/(x1-x0)
-const c=c0.map((a,j)=>Math.round(a+(c1[j]-a)*t))
-return `rgb(${c.join(',')})`
-}}
+for(let i=1;i<cs.length;i++)if(v<=cs[i][0]){const [x0,c0]=cs[i-1],[x1,c1]=cs[i],t=(v-x0)/(x1-x0),c=c0.map((a,j)=>Math.round(a+(c1[j]-a)*t));return `rgb(${c.join(',')})`}
 return `rgb(${cs.at(-1)[1].join(',')})`
 }
 
@@ -200,25 +156,20 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZ
 
 async function loadCountries(){
 try{
-const u='https://raw.githubusercontent.com/fanyulong-rs/SatView/main/Countries.geojson?ts='+Date.now()
-const r=await fetch(u)
+const r=await fetch('./Countries.geojson?ts='+Date.now())
 if(!r.ok)throw new Error('Countries.geojson failed: HTTP '+r.status)
 const data=await r.json()
 countryLayer=L.geoJSON(data,{style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}})
 if(showCountries)countryLayer.addTo(map)
 syncCountryButton()
-}catch(e){
-console.warn(e)
-status('Failed to load country boundaries')
+}catch(e){console.warn(e);status('Failed to load country boundaries')}
 }
-}
-
-function syncCountryButton(){
-$('toggle-countries').textContent='Countries: '+(showCountries?'On':'Off')
-}
+function syncCountryButton(){$('toggle-countries').textContent='Countries: '+(showCountries?'On':'Off')}
 
 async function init(){
 try{
+fillDateControls()
+updateTimeText()
 const r=await fetch('./products.json?ts='+Date.now())
 if(!r.ok)throw new Error('products.json failed: HTTP '+r.status)
 cfg=await r.json()
@@ -231,36 +182,19 @@ $('product').value=def.id
 await loadCountries()
 selectProduct(def.id)
 status('Configuration loaded')
-}catch(e){
-console.error(e)
-status(e.message)
-$('product-desc').textContent=e.message
+}catch(e){console.error(e);status(e.message);$('product-desc').textContent=e.message}
 }
-}
-
-function fillProducts(){
-$('product').innerHTML=products.map(p=>`<option value="${p.id}">${p.name||p.id}</option>`).join('')
-}
-
+function fillProducts(){$('product').innerHTML=products.map(p=>`<option value="${p.id}">${p.name||p.id}</option>`).join('')}
 function selectProduct(id){
 current=products.find(p=>p.id===id)||products[0]
 if(!current)return
 $('product-desc').innerHTML=current.description||''
-fillDateControls(current.dates||[])
 $('time-slider').value=0
 updateTimeText()
 updateLegend()
 loadStations().then(()=>{updateLayer(true);loadMeas()})
 }
-
-function setHourByIndex(i){
-i=(i+24)%24
-$('time-slider').value=i
-updateTimeText()
-updateLayer(false)
-if(measCache[dateValue()])drawMeas(measCache[dateValue()])
-}
-
+function setHourByIndex(i){i=(i+24)%24;$('time-slider').value=i;updateTimeText();updateLayer(false);if(measCache[dateValue()])drawMeas(measCache[dateValue()])}
 function updateLayer(fit=false){
 if(!current)return
 if(!layerVisible){if(overlay)map.removeLayer(overlay);return}
@@ -271,11 +205,11 @@ if(!u){status('Invalid URL');return}
 const op=+$('opacity').value/100
 if(overlay)map.removeLayer(overlay)
 overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(map)
-overlay.on('error',()=>status('Failed to load image: '+u))
+overlay.on('load',()=>status('Layer loaded'))
+overlay.on('error',()=>status('Image not found: '+d+' '+h))
 if(fit&&current.bounds)map.fitBounds(current.bounds)
 $('info').innerHTML=`Date: ${dateLabel()} ${h.slice(1)}:00`
 }
-
 function updateLegend(){
 const l=current?.legend
 if(!l){$('legend').style.display='none';return}
@@ -285,30 +219,16 @@ $('legend-bar').style.background='linear-gradient(to right,'+(l.colors||[]).join
 const labels=l.labels||[]
 $('legend-labels').innerHTML=labels.map((x,i)=>`<span style="left:${(i+1)*10}%">${x}</span>`).join('')
 }
-
 async function loadStations(){
 if(stationsCache||!current||!current.stations_url)return
 try{
 const r=await fetch(current.stations_url+'?ts='+Date.now())
 if(!r.ok)throw new Error('Failed to load stations: HTTP '+r.status)
 stationsCache=await r.json()
-}catch(e){
-console.error(e)
-status(e.message)
+}catch(e){console.error(e);status(e.message)}
 }
-}
-
-function normalizeRecords(data){
-if(Array.isArray(data))return data
-if(Array.isArray(data.records))return data.records
-return []
-}
-
-function getHourFromDate(v){
-const d=new Date(+v)
-return 'H'+String(d.getUTCHours()).padStart(2,'0')
-}
-
+function normalizeRecords(data){if(Array.isArray(data))return data;if(Array.isArray(data.records))return data.records;return []}
+function getHourFromDate(v){const d=new Date(+v);return 'H'+String(d.getUTCHours()).padStart(2,'0')}
 async function loadMeas(){
 if(!current)return
 const key=dateValue()
@@ -322,12 +242,8 @@ if(!r.ok)throw new Error('Failed to load observations: HTTP '+r.status)
 const data=await r.json()
 measCache[key]=data
 drawMeas(data)
-}catch(e){
-console.error(e)
-status(e.message)
+}catch(e){console.error(e);status(e.message)}
 }
-}
-
 function drawMeas(data){
 if(measLayer)map.removeLayer(measLayer)
 if(!showMeas||!data){measLayer=null;return}
@@ -336,9 +252,7 @@ const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s
 const h=hours24[+$('time-slider').value||0]
 const use=records.map(x=>{
 const s=stmap.get(x.Site||x.site||x.id)||{}
-const lat=+(s.Lat??s.lat??s.latitude??s.Latitude)
-const lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude)
-const v=+(x.PM2p5??x.value??x.val)
+const lat=+(s.Lat??s.lat??s.latitude??s.Latitude),lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude),v=+(x.PM2p5??x.value??x.val)
 if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
 if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
 return {lat,lon,v,x}
@@ -346,70 +260,23 @@ return {lat,lon,v,x}
 measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>PM2.5: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('en-GB',{hour12:false}):''}`))).addTo(map)
 $('info').innerHTML=`Date: ${dateLabel()} ${h.slice(1)}:00<br>Observations: ${use.length} points`
 }
-
-function stopPlay(){
-playing=false
-if(timer){clearInterval(timer);timer=null}
-$('play').textContent='▶'
-}
+function stopPlay(){playing=false;if(timer){clearInterval(timer);timer=null}$('play').textContent='▶'}
 
 loadVisits()
-
 $('product').onchange=e=>{stopPlay();stationsCache=null;measCache={};selectProduct(e.target.value)}
-$('year').onchange=()=>{fillMonths(current.dates||[]);updateTimeText();updateLayer(true);loadMeas()}
-$('month').onchange=()=>{fillDays(current.dates||[]);updateTimeText();updateLayer(true);loadMeas()}
+$('year').onchange=()=>{fillMonths();updateTimeText();updateLayer(true);loadMeas()}
+$('month').onchange=()=>{fillDays();updateTimeText();updateLayer(true);loadMeas()}
 $('day').onchange=()=>{updateTimeText();updateLayer(true);loadMeas()}
 $('time-slider').oninput=e=>setHourByIndex(+e.target.value)
-$('play').onclick=()=>{
-playing=!playing
-$('play').textContent=playing?'Ⅱ':'▶'
-if(timer){clearInterval(timer);timer=null}
-if(playing)timer=setInterval(()=>{let i=(+$('time-slider').value+1)%24;setHourByIndex(i)},800)
-}
-$('opacity').oninput=e=>{
-$('opacity-val').textContent=e.target.value+'%'
-if(overlay)overlay.setOpacity(+e.target.value/100)
-}
-$('download').onclick=()=>{
-if(!current)return status('No layer to download')
-const d=dateValue(),h=hours24[+$('time-slider').value||0],u=urlOf(current,d,h)
-if(!u)return status('Missing download URL')
-const a=document.createElement('a')
-a.href=u
-a.download=u.split('/').pop()
-a.click()
-}
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Ⅱ':'▶';if(timer){clearInterval(timer);timer=null}if(playing)timer=setInterval(()=>setHourByIndex((+$('time-slider').value+1)%24),800)}
+$('opacity').oninput=e=>{$('opacity-val').textContent=e.target.value+'%';if(overlay)overlay.setOpacity(+e.target.value/100)}
+$('download').onclick=()=>{if(!current)return status('No layer to download');const d=dateValue(),h=hours24[+$('time-slider').value||0],u=urlOf(current,d,h);if(!u)return status('Missing download URL');const a=document.createElement('a');a.href=u;a.download=u.split('/').pop();a.click()}
 $('fit').onclick=()=>current&&current.bounds&&map.fitBounds(current.bounds)
-$('panel-toggle').onclick=()=>{
-$('panel').classList.toggle('collapsed')
-$('panel-toggle').classList.toggle('collapsed')
-$('panel-toggle').textContent=$('panel').classList.contains('collapsed')?'‹':'›'
-setTimeout(()=>map.invalidateSize(),260)
-}
-$('toggle-countries').onclick=()=>{
-showCountries=!showCountries
-if(countryLayer){
-if(showCountries)countryLayer.addTo(map)
-else map.removeLayer(countryLayer)
-}
-syncCountryButton()
-}
-$('toggle-layer').onclick=()=>{
-layerVisible=!layerVisible
-$('toggle-layer').textContent='Data Layer: '+(layerVisible?'On':'Off')
-if(!layerVisible&&overlay)map.removeLayer(overlay)
-else updateLayer(false)
-}
-$('toggle-meas').onclick=()=>{
-showMeas=!showMeas
-$('toggle-meas').textContent='Observations: '+(showMeas?'On':'Off')
-const key=dateValue()
-if(showMeas){
-if(measCache[key])drawMeas(measCache[key]);else loadMeas()
-}else if(measLayer)map.removeLayer(measLayer)
-}
+$('panel-toggle').onclick=()=>{$('panel').classList.toggle('collapsed');$('panel-toggle').classList.toggle('collapsed');$('panel-toggle').textContent=$('panel').classList.contains('collapsed')?'‹':'›';setTimeout(()=>map.invalidateSize(),260)}
+$('toggle-countries').onclick=()=>{showCountries=!showCountries;if(countryLayer){if(showCountries)countryLayer.addTo(map);else map.removeLayer(countryLayer)}syncCountryButton()}
+$('toggle-layer').onclick=()=>{layerVisible=!layerVisible;$('toggle-layer').textContent='Data Layer: '+(layerVisible?'On':'Off');if(!layerVisible&&overlay)map.removeLayer(overlay);else updateLayer(false)}
+$('toggle-meas').onclick=()=>{showMeas=!showMeas;$('toggle-meas').textContent='Observations: '+(showMeas?'On':'Off');const key=dateValue();if(showMeas){if(measCache[key])drawMeas(measCache[key]);else loadMeas()}else if(measLayer)map.removeLayer(measLayer)}
 $('load-meas').onclick=loadMeas
-
 init()
 </script>
 </body>
