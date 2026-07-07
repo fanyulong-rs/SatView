@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SatView · 星图视界</title>
+<title>SatView · Remote Sensing Viewer</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d1117;--surface:#161b22;--surface2:#1f2937;--border:rgba(255,255,255,.08);--accent:#3b82f6;--accent-h:#60a5fa;--text:#e6edf3;--text-muted:#8b949e;--radius:10px;--panel-w:320px;--header-h:52px}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#1f2937;--border:rgba(255,255,255,.08);--accent:#4f73d9;--accent-h:#6f8df0;--text:#e6edf3;--text-muted:#8b949e;--radius:10px;--panel-w:320px;--header-h:52px}
 html,body{height:100%;font-family:'Segoe UI','PingFang SC','Hiragino Sans GB',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
 header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:rgba(13,17,23,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:1100}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
@@ -30,9 +30,10 @@ header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:rgb
 .panel-body{flex:1;overflow:auto;padding:18px}
 .group{margin-bottom:18px}
 label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:8px}
-select,input[type=range]{width:100%}
-select{height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:0 10px;outline:0}
-select:focus{border-color:var(--accent)}
+select,input[type=range],input[type=date]{width:100%}
+select,input[type=date]{height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:0 10px;outline:0}
+select:focus,input[type=date]:focus{border-color:var(--accent)}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.8}
 .range-row{display:flex;align-items:center;gap:10px}
 .range-row span{width:42px;text-align:right;font-size:12px;color:var(--text-muted)}
 input[type=range]{accent-color:var(--accent)}
@@ -52,14 +53,19 @@ input[type=range]{accent-color:var(--accent)}
 .visit-float{position:fixed;left:16px;bottom:calc(16px + 44px);z-index:950;background:rgba(22,27,34,.92);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text-muted);backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
 .leaflet-control-attribution a{color:var(--accent-h)!important}
-.time-wrap{display:flex;flex-direction:column;gap:6px}
+.time-card{background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 8px 28px rgba(0,0,0,.16);color:#111}
+.time-top{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.play-main{width:54px;height:54px;border-radius:14px;border:0;background:#4f73d9;color:#fff;font-size:25px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.play-main:hover{background:#6f8df0}
+.time-current{font-size:24px;font-weight:500;letter-spacing:.2px;white-space:nowrap;flex:1}
+.time-date{width:170px;height:44px;border:1px solid #c9c9c9;border-radius:8px;background:#fff;color:#111;font-size:18px;padding:0 10px}
+.time-date::-webkit-calendar-picker-indicator{filter:none;opacity:1}
 #time-slider{width:100%;height:24px;appearance:none;-webkit-appearance:none;background:transparent}
-#time-slider::-webkit-slider-runnable-track{height:6px;background:#e5e7eb;border-radius:999px}
-#time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);margin-top:-6px;border:2px solid #fff;box-shadow:0 0 0 2px rgba(59,130,246,.25)}
-#time-slider::-moz-range-track{height:6px;background:#e5e7eb;border-radius:999px}
-#time-slider::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--accent)}
-.time-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);padding:0 2px}
-@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw}.visit-float{display:none}}
+#time-slider::-webkit-slider-runnable-track{height:7px;background:#e5e7eb;border-radius:999px}
+#time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;border-radius:50%;background:#4f73d9;margin-top:-12.5px;border:0}
+#time-slider::-moz-range-track{height:7px;background:#e5e7eb;border-radius:999px}
+#time-slider::-moz-range-thumb{width:32px;height:32px;border:none;border-radius:50%;background:#4f73d9}
+@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw}.visit-float{display:none}.time-current{font-size:18px}.time-date{width:130px;font-size:14px}.time-card{padding:12px}.play-main{width:44px;height:44px}}
 </style>
 </head>
 <body>
@@ -77,37 +83,44 @@ input[type=range]{accent-color:var(--accent)}
 
 <aside id="panel">
 <div class="panel-head">
-<div class="panel-title">产品控制</div>
-<div class="panel-desc" id="product-desc">读取 products.json 中...</div>
+<div class="panel-title">Product Control</div>
+<div class="panel-desc" id="product-desc">Reading products.json...</div>
 </div>
 <div class="panel-body">
-<div class="group"><label>遥感产品</label><select id="product"></select></div>
-<div class="group"><label>日期</label><select id="date"></select></div>
-<div class="group"><label>小时</label><select id="hour"></select></div>
-<div class="group"><label>时间轴</label><div class="time-wrap"><input id="time-slider" type="range" min="0" max="23" value="0"><div class="time-labels"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div></div>
-<div class="group"><button class="btn secondary" id="play">播放</button></div>
-<div class="group"><label>图层透明度</label><div class="range-row"><input id="opacity" type="range" min="0" max="100" value="80"><span id="opacity-val">80%</span></div></div>
-<div class="group"><label>矢量图层</label><button class="btn secondary" id="toggle-countries">国界开关：开</button></div>
-<div class="group"><button class="btn secondary" id="toggle-layer">数据开关：开</button></div>
-<div class="group"><label>站点观测</label><button class="btn secondary" id="toggle-meas">观测开关：开</button></div>
-<div class="group"><button class="btn secondary" id="load-meas">加载观测</button></div>
-<div class="group"><button class="btn" id="download">下载原图</button></div>
-<div class="group"><button class="btn secondary" id="fit">缩放到图层</button></div>
-<div class="info" id="info">等待加载...</div>
+<div class="group"><label>Remote Sensing Product</label><select id="product"></select></div>
+<div class="group">
+<label>Time</label>
+<div class="time-card">
+<div class="time-top">
+<button class="play-main" id="play">▶</button>
+<div class="time-current" id="time-current">---- -- -- --:00</div>
+<input id="date" class="time-date" type="date">
+</div>
+<input id="time-slider" type="range" min="0" max="23" value="0">
+</div>
+</div>
+<div class="group"><label>Layer Opacity</label><div class="range-row"><input id="opacity" type="range" min="0" max="100" value="80"><span id="opacity-val">80%</span></div></div>
+<div class="group"><label>Vector Layer</label><button class="btn secondary" id="toggle-countries">Countries: On</button></div>
+<div class="group"><button class="btn secondary" id="toggle-layer">Data Layer: On</button></div>
+<div class="group"><label>Station Observations</label><button class="btn secondary" id="toggle-meas">Observations: On</button></div>
+<div class="group"><button class="btn secondary" id="load-meas">Load Observations</button></div>
+<div class="group"><button class="btn" id="download">Download Image</button></div>
+<div class="group"><button class="btn secondary" id="fit">Zoom to Layer</button></div>
+<div class="info" id="info">Waiting for loading...</div>
 </div>
 </aside>
 
-<div class="status" id="status">正在加载配置...</div>
-<div class="visit-float" id="visit-float">访问统计加载中...</div>
+<div class="status" id="status">Loading configuration...</div>
+<div class="visit-float" id="visit-float">Loading visits...</div>
 
 <div class="legend" id="legend" style="display:none">
-  <div class="legend-row">
-    <div class="legend-title" id="legend-title"></div>
-    <div class="legend-bar-wrap">
-      <div class="legend-bar" id="legend-bar"></div>
-      <div class="legend-labels" id="legend-labels"></div>
-    </div>
-  </div>
+<div class="legend-row">
+<div class="legend-title" id="legend-title"></div>
+<div class="legend-bar-wrap">
+<div class="legend-bar" id="legend-bar"></div>
+<div class="legend-labels" id="legend-labels"></div>
+</div>
+</div>
 </div>
 
 <script>
@@ -115,16 +128,24 @@ let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,layerVis
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
 const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
-const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',d).replaceAll('{hour}',h):''
+const pad=n=>String(n).padStart(2,'0')
+const dateCompact=s=>String(s||'').replaceAll('-','')
+const dateDash=s=>{s=String(s||'');return /^\d{8}$/.test(s)?`${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`:s}
+const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',dateCompact(d)).replaceAll('{hour}',h):''
 const vf=$('visit-float')
-function fmtTime(t){return new Date(t).toLocaleString('zh-CN',{hour12:false})}
+function fmtTime(t){return new Date(t).toLocaleString('en-GB',{hour12:false})}
+function updateTimeText(){
+const d=$('date').value||'---- -- --'
+const i=+$('time-slider').value||0
+$('time-current').textContent=`${d} ${pad(i)}:00`
+}
 function loadVisits(){
 const k='satview_visits'
 let v=JSON.parse(localStorage.getItem(k)||'{"count":0,"last":""}')
 v.count++
 v.last=new Date().toISOString()
 localStorage.setItem(k,JSON.stringify(v))
-vf.textContent=`访问次数：${v.count}｜最近访问：${fmtTime(v.last)}`
+vf.textContent=`Visits: ${v.count} | Last visit: ${fmtTime(v.last)}`
 }
 function pmColor(v){
 if(v==null||isNaN(v))return '#999'
@@ -147,35 +168,35 @@ async function loadCountries(){
 try{
 const u='https://raw.githubusercontent.com/fanyulong-rs/SatView/main/Countries.geojson?ts='+Date.now()
 const r=await fetch(u)
-if(!r.ok)throw new Error('Countries.geojson 读取失败：HTTP '+r.status)
+if(!r.ok)throw new Error('Countries.geojson failed: HTTP '+r.status)
 const data=await r.json()
 countryLayer=L.geoJSON(data,{style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}})
 if(showCountries)countryLayer.addTo(map)
 syncCountryButton()
 }catch(e){
 console.warn(e)
-status('国界加载失败，主图不受影响')
+status('Failed to load country boundaries')
 }
 }
 
 function syncCountryButton(){
-$('toggle-countries').textContent='国界开关：'+(showCountries?'开':'关')
+$('toggle-countries').textContent='Countries: '+(showCountries?'On':'Off')
 }
 
 async function init(){
 try{
 const r=await fetch('./products.json?ts='+Date.now())
-if(!r.ok)throw new Error('products.json 读取失败：HTTP '+r.status)
+if(!r.ok)throw new Error('products.json failed: HTTP '+r.status)
 cfg=await r.json()
 products=cfg.products||[]
-if(!products.length)throw new Error('products.json 中 products 为空')
+if(!products.length)throw new Error('No products found in products.json')
 $('updated').textContent='Updated '+(cfg.updated_at||'')
 fillProducts()
 const def=products.find(p=>p.id===cfg.default_product)||products[0]
 $('product').value=def.id
 await loadCountries()
 selectProduct(def.id)
-status('配置加载完成')
+status('Configuration loaded')
 }catch(e){
 console.error(e)
 status(e.message)
@@ -191,12 +212,12 @@ function selectProduct(id){
 current=products.find(p=>p.id===id)||products[0]
 if(!current)return
 $('product-desc').innerHTML=current.description||''
-$('date').innerHTML=(current.dates||[]).map(d=>`<option value="${d}">${d}</option>`).join('')
-$('date').value=(current.dates&&current.dates[0])||''
-$('hour').innerHTML=(current.hours&&current.hours.length?current.hours:hours24).map(h=>`<option value="${h}">${h}</option>`).join('')
-const h=current.default_hour&&($('hour').querySelector(`option[value="${current.default_hour}"]`))?current.default_hour:($('hour').value||'H00')
-$('hour').value=h
-$('time-slider').value=hours24.indexOf(h)
+const ds=current.dates||[]
+$('date').min=ds.length?dateDash(ds.at(-1)):''
+$('date').max=ds.length?dateDash(ds[0]):''
+$('date').value=ds.length?dateDash(ds[0]):''
+$('time-slider').value=0
+updateTimeText()
 updateLegend()
 loadStations().then(()=>{updateLayer(true);loadMeas()})
 }
@@ -205,7 +226,7 @@ function setHourByIndex(i){
 i=(i+24)%24
 const h=hours24[i]
 $('time-slider').value=i
-$('hour').value=h
+updateTimeText()
 updateLayer(false)
 if(measCache[$('date').value])drawMeas(measCache[$('date').value])
 }
@@ -213,16 +234,16 @@ if(measCache[$('date').value])drawMeas(measCache[$('date').value])
 function updateLayer(fit=false){
 if(!current)return
 if(!layerVisible){if(overlay)map.removeLayer(overlay);return}
-const d=$('date').value,h=$('hour').value
-if(!d||!h){status('缺少日期或小时，无法加载图层');return}
+const d=$('date').value,h=hours24[+$('time-slider').value||0]
+if(!d||!h){status('Missing date or hour');return}
 const u=urlOf(current,d,h)
-if(!u){status('URL 无效');return}
+if(!u){status('Invalid URL');return}
 const op=+$('opacity').value/100
 if(overlay)map.removeLayer(overlay)
 overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(map)
-overlay.on('error',()=>status('图像加载失败：'+u))
+overlay.on('error',()=>status('Failed to load image: '+u))
 if(fit&&current.bounds)map.fitBounds(current.bounds)
-$('info').innerHTML=`Date: ${d} ${h}`
+$('info').innerHTML=`Date: ${d} ${h.slice(1)}:00`
 }
 
 function updateLegend(){
@@ -239,7 +260,7 @@ async function loadStations(){
 if(stationsCache||!current||!current.stations_url)return
 try{
 const r=await fetch(current.stations_url+'?ts='+Date.now())
-if(!r.ok)throw new Error('站点读取失败：HTTP '+r.status)
+if(!r.ok)throw new Error('Failed to load stations: HTTP '+r.status)
 stationsCache=await r.json()
 }catch(e){
 console.error(e)
@@ -262,14 +283,15 @@ async function loadMeas(){
 if(!current)return
 const d=$('date').value
 if(!d)return
-if(measCache[d]){drawMeas(measCache[d]);return}
+const key=dateCompact(d)
+if(measCache[key]){drawMeas(measCache[key]);return}
 try{
 const u=current.meas_template
 if(!u)return
-const r=await fetch(u.replaceAll('{date}',d)+'?ts='+Date.now())
-if(!r.ok)throw new Error('观测读取失败：HTTP '+r.status)
+const r=await fetch(u.replaceAll('{date}',key)+'?ts='+Date.now())
+if(!r.ok)throw new Error('Failed to load observations: HTTP '+r.status)
 const data=await r.json()
-measCache[d]=data
+measCache[key]=data
 drawMeas(data)
 }catch(e){
 console.error(e)
@@ -282,7 +304,7 @@ if(measLayer)map.removeLayer(measLayer)
 if(!showMeas||!data){measLayer=null;return}
 const records=normalizeRecords(data)
 const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s.Site||s.site||s.id,s]))
-const h=$('hour').value
+const h=hours24[+$('time-slider').value||0]
 const use=records.map(x=>{
 const s=stmap.get(x.Site||x.site||x.id)||{}
 const lat=+(s.Lat??s.lat??s.latitude??s.Latitude)
@@ -292,30 +314,24 @@ if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
 if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
 return {lat,lon,v,x}
 }).filter(Boolean)
-measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>PM2.5: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('zh-CN',{hour12:false}):''}`))).addTo(map)
-$('info').innerHTML=`Date: ${$('date').value} ${h}<br>观测: ${use.length} 个点`
+measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>PM2.5: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('en-GB',{hour12:false}):''}`))).addTo(map)
+$('info').innerHTML=`Date: ${$('date').value} ${h.slice(1)}:00<br>Observations: ${use.length} points`
 }
 
 function stopPlay(){
 playing=false
 if(timer){clearInterval(timer);timer=null}
-$('play').textContent='播放'
+$('play').textContent='▶'
 }
 
 loadVisits()
 
 $('product').onchange=e=>{stopPlay();stationsCache=null;measCache={};selectProduct(e.target.value)}
-$('date').onchange=()=>{updateLayer(true);loadMeas()}
-$('hour').onchange=()=>{
-const i=hours24.indexOf($('hour').value)
-if(i>=0)$('time-slider').value=i
-updateLayer(false)
-if(measCache[$('date').value])drawMeas(measCache[$('date').value])
-}
+$('date').onchange=()=>{updateTimeText();updateLayer(true);loadMeas()}
 $('time-slider').oninput=e=>setHourByIndex(+e.target.value)
 $('play').onclick=()=>{
 playing=!playing
-$('play').textContent=playing?'暂停':'播放'
+$('play').textContent=playing?'Ⅱ':'▶'
 if(timer){clearInterval(timer);timer=null}
 if(playing)timer=setInterval(()=>{let i=(+$('time-slider').value+1)%24;setHourByIndex(i)},800)
 }
@@ -324,9 +340,9 @@ $('opacity-val').textContent=e.target.value+'%'
 if(overlay)overlay.setOpacity(+e.target.value/100)
 }
 $('download').onclick=()=>{
-if(!current)return status('没有可下载的图层')
-const d=$('date').value,h=$('hour').value,u=urlOf(current,d,h)
-if(!u)return status('缺少下载地址')
+if(!current)return status('No layer to download')
+const d=$('date').value,h=hours24[+$('time-slider').value||0],u=urlOf(current,d,h)
+if(!u)return status('Missing download URL')
 const a=document.createElement('a')
 a.href=u
 a.download=u.split('/').pop()
@@ -349,15 +365,16 @@ syncCountryButton()
 }
 $('toggle-layer').onclick=()=>{
 layerVisible=!layerVisible
-$('toggle-layer').textContent='数据开关：'+(layerVisible?'开':'关')
+$('toggle-layer').textContent='Data Layer: '+(layerVisible?'On':'Off')
 if(!layerVisible&&overlay)map.removeLayer(overlay)
 else updateLayer(false)
 }
 $('toggle-meas').onclick=()=>{
 showMeas=!showMeas
-$('toggle-meas').textContent='观测开关：'+(showMeas?'开':'关')
+$('toggle-meas').textContent='Observations: '+(showMeas?'On':'Off')
+const key=dateCompact($('date').value)
 if(showMeas){
-if(measCache[$('date').value])drawMeas(measCache[$('date').value]);else loadMeas()
+if(measCache[key])drawMeas(measCache[key]);else loadMeas()
 }else if(measLayer)map.removeLayer(measLayer)
 }
 $('load-meas').onclick=loadMeas
