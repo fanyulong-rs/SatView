@@ -41,7 +41,7 @@ input[type=range]{accent-color:var(--accent)}
 .btn.secondary{background:var(--surface2);color:var(--text)}
 .btn.secondary:hover{border-color:var(--accent)}
 .info{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius);padding:12px;font-size:12px;line-height:1.6;color:var(--text-muted)}
-.legend{position:fixed;left:16px;bottom:16px;z-index:900;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:26px;padding:10px 14px;min-width:680px;max-width:1100px;box-shadow:0 6px 24px rgba(0,0,0,.12);color:#111}
+.legend{position:fixed;right:336px;left:auto;bottom:16px;z-index:900;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:26px;padding:10px 14px;min-width:680px;max-width:1100px;box-shadow:0 6px 24px rgba(0,0,0,.12);color:#111}
 .legend-row{display:flex;align-items:center;gap:14px;width:100%}
 .legend-title{font-size:16px;font-weight:800;white-space:nowrap;color:#111;line-height:1;flex:0 0 auto;margin:0}
 .legend-bar-wrap{position:relative;flex:1;height:22px}
@@ -51,18 +51,18 @@ input[type=range]{accent-color:var(--accent)}
 .status{position:fixed;left:16px;top:calc(var(--header-h) + 16px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:420px}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
 .leaflet-control-attribution a{color:var(--accent-h)!important}
-.time-float{position:fixed;left:16px;bottom:92px;z-index:960;width:620px;background:#fff;border-radius:10px;padding:5px 10px;box-shadow:0 5px 16px rgba(0,0,0,.15);color:#111}
-.time-current{font-size:13px;font-weight:600;margin-bottom:4px;white-space:nowrap}
-.date-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:6px;margin-bottom:5px}
-.date-row select{height:21px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:5px;color:#111;font-size:10px;padding:0 5px}
-.time-row{display:flex;align-items:center;gap:7px}
-.play-main{width:22px;height:22px;border-radius:6px;border:0;background:#5f6edb;color:#fff;font-size:10px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.time-float{position:fixed;left:16px;bottom:16px;z-index:960;width:560px;background:#fff;border-radius:9px;padding:4px 9px;box-shadow:0 4px 14px rgba(0,0,0,.14);color:#111}
+.time-current{font-size:12px;font-weight:600;margin-bottom:3px;white-space:nowrap}
+.date-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:5px;margin-bottom:4px}
+.date-row select{height:19px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:5px;color:#111;font-size:9px;padding:0 5px}
+.time-row{display:flex;align-items:center;gap:6px}
+.play-main{width:20px;height:20px;border-radius:5px;border:0;background:#5f6edb;color:#fff;font-size:9px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
 .play-main:hover{background:#7080ef}
 #time-slider{width:100%;height:5px;appearance:none;-webkit-appearance:none;background:transparent}
-#time-slider::-webkit-slider-runnable-track{height:2px;background:#e5e7eb;border-radius:999px}
-#time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:9px;border-radius:50%;background:#5f6edb;margin-top:-3.5px;border:0}
-#time-slider::-moz-range-track{height:2px;background:#e5e7eb;border-radius:999px}
-#time-slider::-moz-range-thumb{width:9px;height:9px;border:none;border-radius:50%;background:#5f6edb}
+#time-slider::-webkit-slider-runnable-track{height:1.5px;background:#e5e7eb;border-radius:999px}
+#time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:#5f6edb;margin-top:-3.25px;border:0}
+#time-slider::-moz-range-track{height:1.5px;background:#e5e7eb;border-radius:999px}
+#time-slider::-moz-range-thumb{width:8px;height:8px;border:none;border-radius:50%;background:#5f6edb}
 @media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw;bottom:16px}.time-float{left:12px;right:12px;bottom:92px;width:auto}.time-current{font-size:17px}}
 </style>
 </head>
