@@ -41,7 +41,7 @@ input[type=range]{accent-color:var(--accent)}
 .btn.secondary{background:var(--surface2);color:var(--text)}
 .btn.secondary:hover{border-color:var(--accent)}
 .info{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius);padding:12px;font-size:12px;line-height:1.6;color:var(--text-muted)}
-.legend{position:fixed;right:336px;left:auto;bottom:16px;z-index:900;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:26px;padding:10px 14px;min-width:680px;max-width:1100px;box-shadow:0 6px 24px rgba(0,0,0,.12);color:#111}
+.legend{position:fixed;right:calc(336px + clamp(12px,2vw,18px));left:auto;bottom:clamp(12px,2vw,16px);z-index:900;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:26px;padding:clamp(6px,1vw,10px) clamp(10px,1.4vw,14px);width:clamp(260px,40vw,700px);max-width:calc(100vw - 380px);box-shadow:0 6px 24px rgba(0,0,0,.12);color:#111}
 .legend-row{display:flex;align-items:center;gap:14px;width:100%}
 .legend-title{font-size:16px;font-weight:800;white-space:nowrap;color:#111;line-height:1;flex:0 0 auto;margin:0}
 .legend-bar-wrap{position:relative;flex:1;height:22px}
@@ -51,19 +51,26 @@ input[type=range]{accent-color:var(--accent)}
 .status{position:fixed;left:26px;top:calc(var(--header-h) + 16px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:420px}
 .leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
 .leaflet-control-attribution a{color:var(--accent-h)!important}
-.time-float{position:fixed;left:16px;bottom:16px;z-index:960;width:560px;background:#fff;border-radius:9px;padding:6px 10px;box-shadow:0 4px 14px rgba(0,0,0,.14);color:#111}
+.time-float{position:fixed;left:clamp(12px,1.2vw,16px);bottom:clamp(12px,1.2vw,16px);z-index:960;width:clamp(300px,42vw,560px);max-width:calc(100vw - 380px);background:#fff;border-radius:9px;padding:clamp(4px,0.8vw,6px) clamp(8px,1vw,10px);box-shadow:0 4px 14px rgba(0,0,0,.14);color:#111}
 .time-current{font-size:16px;font-weight:800;margin-bottom:5px;white-space:nowrap}
 .date-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:5px;margin-bottom:5px}
 .date-row select{height:24px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:5px;color:#111;font-size:13px;font-weight:600;padding:0 6px}
 .time-row{display:flex;align-items:center;gap:8px;width:100%}
-.play-main{width:28px;height:28px;border-radius:6px;border:0;background:#5f6edb;color:#fff;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 28px}
+.play-main{width:clamp(24px,2.4vw,28px);height:clamp(24px,2.4vw,28px);border-radius:6px;border:0;background:#5f6edb;color:#fff;font-size:clamp(11px,1.2vw,13px);line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
 .play-main:hover{background:#7080ef}
 #time-slider{flex:1;min-width:0;width:auto;height:8px;appearance:none;-webkit-appearance:none;background:transparent}
 #time-slider::-webkit-slider-runnable-track{height:2px;background:#e5e7eb;border-radius:999px}
 #time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:#5f6edb;margin-top:-4px;border:0}
 #time-slider::-moz-range-track{height:2px;background:#e5e7eb;border-radius:999px}
 #time-slider::-moz-range-thumb{width:10px;height:10px;border:none;border-radius:50%;background:#5f6edb}
-@media(max-width:720px){:root{--panel-w:86vw}.header-badge{display:none}.logo-sub{display:none}.legend{min-width:260px;max-width:92vw;bottom:16px}.time-float{left:12px;right:12px;bottom:92px;width:auto}.time-current{font-size:17px}}
+@media(max-width:720px){
+:root{--panel-w:86vw}
+.header-badge{display:none}
+.logo-sub{display:none}
+.legend{right:12px;left:12px;bottom:12px;width:auto;max-width:none;min-width:0}
+.time-float{left:12px;right:12px;bottom:88px;width:auto;max-width:none}
+.time-current{font-size:15px}
+}
 </style>
 </head>
 <body>
@@ -114,32 +121,10 @@ const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',da
 const daysInMonth=(y,m)=>new Date(+y,+m,0).getDate()
 
 function updateTimeText(){const i=+$('time-slider').value||0;$('time-current').textContent=`${dateLabel()} ${pad(i)}:00`}
-function fillDateControls(){
-const years=[2022,2023,2024,2025,2026]
-$('year').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('')
-$('year').value='2022'
-fillMonths()
-}
-function fillMonths(){
-const old=$('month').value
-const ms=[...Array(12)].map((_,i)=>String(i+1).padStart(2,'0'))
-$('month').innerHTML=ms.map(m=>`<option value="${m}">${m}</option>`).join('')
-$('month').value=ms.includes(old)?old:'01'
-fillDays()
-}
-function fillDays(){
-const y=$('year').value,m=$('month').value,old=$('day').value,n=daysInMonth(y,m)
-const ds=[...Array(n)].map((_,i)=>String(i+1).padStart(2,'0'))
-$('day').innerHTML=ds.map(d=>`<option value="${d}">${d}</option>`).join('')
-$('day').value=ds.includes(old)?old:'01'
-}
-function pmColor(v){
-if(v==null||isNaN(v))return '#999'
-const cs=[[0,[49,54,149]],[10,[74,123,183]],[20,[128,183,214]],[35,[189,226,238]],[50,[238,248,223]],[60,[254,238,165]],[70,[253,191,113]],[80,[246,123,74]],[90,[218,55,42]],[100,[165,0,38]]]
-if(v<=cs[0][0])return `rgb(${cs[0][1].join(',')})`
-for(let i=1;i<cs.length;i++)if(v<=cs[i][0]){const [x0,c0]=cs[i-1],[x1,c1]=cs[i],t=(v-x0)/(x1-x0),c=c0.map((a,j)=>Math.round(a+(c1[j]-a)*t));return `rgb(${c.join(',')})`}
-return `rgb(${cs.at(-1)[1].join(',')})`
-}
+function fillDateControls(){const years=[2022,2023,2024,2025,2026];$('year').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('');$('year').value='2022';fillMonths()}
+function fillMonths(){const old=$('month').value;const ms=[...Array(12)].map((_,i)=>String(i+1).padStart(2,'0'));$('month').innerHTML=ms.map(m=>`<option value="${m}">${m}</option>`).join('');$('month').value=ms.includes(old)?old:'01';fillDays()}
+function fillDays(){const y=$('year').value,m=$('month').value,old=$('day').value,n=daysInMonth(y,m);const ds=[...Array(n)].map((_,i)=>String(i+1).padStart(2,'0'));$('day').innerHTML=ds.map(d=>`<option value="${d}">${d}</option>`).join('');$('day').value=ds.includes(old)?old:'01'}
+function pmColor(v){if(v==null||isNaN(v))return '#999';const cs=[[0,[49,54,149]],[10,[74,123,183]],[20,[128,183,214]],[35,[189,226,238]],[50,[238,248,223]],[60,[254,238,165]],[70,[253,191,113]],[80,[246,123,74]],[90,[218,55,42]],[100,[165,0,38]]];if(v<=cs[0][0])return `rgb(${cs[0][1].join(',')})`;for(let i=1;i<cs.length;i++)if(v<=cs[i][0]){const [x0,c0]=cs[i-1],[x1,c1]=cs[i],t=(v-x0)/(x1-x0),c=c0.map((a,j)=>Math.round(a+(c1[j]-a)*t));return `rgb(${c.join(',')})`}return `rgb(${cs.at(-1)[1].join(',')})`}
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,115],3)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
