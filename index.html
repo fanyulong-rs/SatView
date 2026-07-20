@@ -241,9 +241,6 @@ const use=records.map(x=>{
 const s=stmap.get(x.Site||x.site||x.id)||{}
 const lat=+(s.Lat??s.lat??s.latitude??s.Latitude),lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude),v=+(x.AOD_550nm??x.PM2p5??x.value??x.val)
 if(!isFinite(lat)||!isFinite(lon)||!isFinite(v)){
-console.log('drop', {key:x.Site||x.site||x.id, stationKey:s&& (s.Site||s.site||s.id), lat, lon, v})
-console.log('sample station keys', [...stmap.keys()].slice(0,30))
-console.log('record key sample', records.slice(0,10).map(x=>x.Site||x.site||x.id))
 return null
 }
 console.log('matchKey',key,'station?',!!s,'lat',lat,'lon',lon,'v',v)
