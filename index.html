@@ -203,7 +203,12 @@ if(!r.ok)throw new Error('Failed to load stations: HTTP '+r.status)
 stationsCache=await r.json()
 }catch(e){console.error(e);status(e.message)}
 }
-function normalizeRecords(data){if(Array.isArray(data))return data;if(Array.isArray(data.records))return data.records;return []}
+function normalizeRecords(x){
+if(!x)return[]
+if(Array.isArray(x))return x
+if(Array.isArray(x.records))return x.records
+return[]
+}
 function getHourFromDate(v){const d=new Date(+v);return 'H'+String(d.getUTCHours()).padStart(2,'0')}
 async function loadMeas(){
 if(!current)return
@@ -231,15 +236,13 @@ const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s
 const h=hours24[+$('time-slider').value||0]
 const use=records.map(x=>{
 const s=stmap.get(x.Site||x.site||x.id)||{}
-console.log('stationsCache?',!!stationsCache,'stationsCache sample',stationsCache?.[0]||stationsCache?.records?.[0])
-console.log('records len',records.length,'records0',records[0])
-console.log('stmap size',stmap.size,'stations0',normalizeRecords(stationsCache)?.[0])
 const lat=+(s.Lat??s.lat??s.latitude??s.Latitude),lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude),v=+(x.AOD_550nm??x.PM2p5??x.value??x.val)
 if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
 //if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
+console.log('records',records.length,'use',use.length)
 return {lat,lon,v,x}
 }).filter(Boolean)
-console.log('records',records.length,'use',use.length)
+
 measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>Measurements: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('en-GB',{hour12:false}):''}`))).addTo(map)
 $('info').innerHTML=`Date: ${dateLabel()} ${h.slice(1)}:00<br>Observations: ${use.length} points`
 }
