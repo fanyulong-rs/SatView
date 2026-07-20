@@ -201,7 +201,7 @@ try{
 const r=await fetch(current.stations_url)
 if(!r.ok)throw new Error('Failed to load stations: HTTP '+r.status)
 stationsCache=await r.json()
-console.log('stationsCache type',Array.isArray(stationsCache)?'array':typeof stationsCache,Object.keys(stationsCache||{}).slice(0,20))
+console.log('matchKey',x.Site||x.site||x.id,'station?',!!s,'lat',lat,'lon',lon,'v',v)
 console.log('stationsCache isArray',Array.isArray(stationsCache),'len',Array.isArray(stationsCache)?stationsCache.length:undefined)
 console.log('stationsCache head',Array.isArray(stationsCache)?stationsCache.slice(0,3):stationsCache?.records?.slice?.(0,3))
 }catch(e){console.error(e);status(e.message)}
