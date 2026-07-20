@@ -10,7 +10,7 @@
       "description": "Global hourly AOD over land",
       "unit": " ",
       "url_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Aerosols/Global%20Hourly%20AOD/Satellite/{date}/1800x3600_GEO-Ring.AOD.{date}.{hour}_10KM.webp",
-      "meas_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Aerosols/Global%20Hourly%20AOD/Stations/{year}/AOD_Sites_{date}.json",
+      "meas_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Aerosols/Global%20Hourly%20AOD/Stations/2021/AOD_Sites_{date}.json",
       "stations_url": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Aerosols/Global%20Hourly%20AOD/AOD_Sites.json",
       "hours": ["H00","H01","H02","H03","H04","H05","H06","H07","H08","H09","H10","H11","H12","H13","H14","H15","H16","H17","H18","H19","H20","H21","H22","H23"],
       "default_hour": "H02",
