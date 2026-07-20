@@ -230,6 +230,9 @@ const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s
 const h=hours24[+$('time-slider').value||0]
 const use=records.map(x=>{
 const s=stmap.get(x.Site||x.site||x.id)||{}
+console.log('stationsCache?',!!stationsCache,'stationsCache sample',stationsCache?.[0]||stationsCache?.records?.[0])
+console.log('records len',records.length,'records0',records[0])
+console.log('stmap size',stmap.size,'stations0',normalizeRecords(stationsCache)?.[0])
 const lat=+(s.Lat??s.lat??s.latitude??s.Latitude),lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude),v=+(x.AOD_550nm??x.PM2p5??x.value??x.val)
 if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
 //if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
