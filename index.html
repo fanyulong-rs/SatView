@@ -232,10 +232,10 @@ const use=records.map(x=>{
 const s=stmap.get(x.Site||x.site||x.id)||{}
 const lat=+(s.Lat??s.lat??s.latitude??s.Latitude),lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude),v=+(x.AOD_550nm??x.PM2p5??x.value??x.val)
 if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
-if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
+//if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
 return {lat,lon,v,x}
 }).filter(Boolean)
-measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>PM2.5: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('en-GB',{hour12:false}):''}`))).addTo(map)
+measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>Measurements: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('en-GB',{hour12:false}):''}`))).addTo(map)
 $('info').innerHTML=`Date: ${dateLabel()} ${h.slice(1)}:00<br>Observations: ${use.length} points`
 }
 function stopPlay(){playing=false;if(timer){clearInterval(timer);timer=null}$('play').textContent='▶'}
