@@ -213,7 +213,9 @@ if(measCache[key]){drawMeas(measCache[key]);return}
 try{
 const u=current.meas_template
 if(!u)return
-const r=await fetch(u.replaceAll('{date}',key)+'?ts='+Date.now())
+// const r=await fetch(u.replaceAll('{date}',key)+'?ts='+Date.now())
+const url=u.replaceAll('{date}',key)
+const r=await fetch(url)
 if(!r.ok)throw new Error('Failed to load observations: HTTP '+r.status)
 const data=await r.json()
 measCache[key]=data
