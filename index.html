@@ -226,6 +226,7 @@ function drawMeas(data){
 if(measLayer)map.removeLayer(measLayer)
 if(!showMeas||!data){measLayer=null;return}
 const records=normalizeRecords(data)
+console.log('sample record', records[0], 'AOD_550nm', records[0]?.AOD_550nm, 'PM2p5', records[0]?.PM2p5, 'value', records[0]?.value)
 const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s.Site||s.site||s.id,s]))
 const h=hours24[+$('time-slider').value||0]
 const use=records.map(x=>{
