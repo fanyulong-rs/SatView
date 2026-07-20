@@ -5,8 +5,8 @@
   "products": [
     {
       "id": "SPM2p5",
-      "name": "细颗粒物 (PM<sub>2.5</sub>)",
-      "description": "全球逐小时PM<sub>2.5</sub>浓度",
+      "name": "Fine Particulate Matter (PM<sub>2.5</sub>)",
+      "description": "Global hourly PM<sub>2.5</sub> over land",
       "unit": "μg/m³",
       "url_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/Satellite/{date}/1800x3600_{date}-{hour}_SPM2p5.webp",
       "meas_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/Stations/PM2.5_Sites_{date}.json",

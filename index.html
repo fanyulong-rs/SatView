@@ -121,7 +121,7 @@ const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',da
 const daysInMonth=(y,m)=>new Date(+y,+m,0).getDate()
 
 function updateTimeText(){const i=+$('time-slider').value||0;$('time-current').textContent=`${dateLabel()} ${pad(i)}:00`}
-function fillDateControls(){const years=[2022,2023,2024,2025,2026];$('year').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('');$('year').value='2022';fillMonths()}
+function fillDateControls(){const years=[2021,2022,2023,2024,2025,2026];$('year').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('');$('year').value='2022';fillMonths()}
 function fillMonths(){const old=$('month').value;const ms=[...Array(12)].map((_,i)=>String(i+1).padStart(2,'0'));$('month').innerHTML=ms.map(m=>`<option value="${m}">${m}</option>`).join('');$('month').value=ms.includes(old)?old:'01';fillDays()}
 function fillDays(){const y=$('year').value,m=$('month').value,old=$('day').value,n=daysInMonth(y,m);const ds=[...Array(n)].map((_,i)=>String(i+1).padStart(2,'0'));$('day').innerHTML=ds.map(d=>`<option value="${d}">${d}</option>`).join('');$('day').value=ds.includes(old)?old:'01'}
 function pmColor(v){if(v==null||isNaN(v))return '#999';const cs=[[0,[49,54,149]],[10,[74,123,183]],[20,[128,183,214]],[35,[189,226,238]],[50,[238,248,223]],[60,[254,238,165]],[70,[253,191,113]],[80,[246,123,74]],[90,[218,55,42]],[100,[165,0,38]]];if(v<=cs[0][0])return `rgb(${cs[0][1].join(',')})`;for(let i=1;i<cs.length;i++)if(v<=cs[i][0]){const [x0,c0]=cs[i-1],[x1,c1]=cs[i],t=(v-x0)/(x1-x0),c=c0.map((a,j)=>Math.round(a+(c1[j]-a)*t));return `rgb(${c.join(',')})`}return `rgb(${cs.at(-1)[1].join(',')})`}
