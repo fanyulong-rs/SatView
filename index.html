@@ -241,7 +241,7 @@ const lat=+(s.Lat??s.lat??s.latitude??s.Latitude),lon=+(s.Lon??s.lon??s.lng??s.l
 if(!isFinite(lat)||!isFinite(lon)||!isFinite(v)){
 return null
 }
-console.log('matchKey',key,'station?',!!s,'lat',lat,'lon',lon,'v',v)
+// console.log('matchKey',key,'station?',!!s,'lat',lat,'lon',lon,'v',v)
 //if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
 console.log('records',records.length,'use',use.length)
 return {lat,lon,v,x}
