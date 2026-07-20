@@ -11,13 +11,6 @@
       "url_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/Satellite/{date}/1800x3600_{date}-{hour}_SPM2p5.webp",
       "meas_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/Stations/PM2.5_Sites_{date}.json",
       "stations_url": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/PM2.5_Sites_2022.json",
-      "dates": [
-          "20220101","20220102","20220103","20220104","20220105","20220106","20220107","20220108","20220109","20220110",
-          "20220111","20220112","20220113","20220114","20220115","20220116","20220117","20220118","20220119","20220120",
-          "20220121","20220122","20220123","20220124","20220125","20220126","20220127","20220128","20220129","20220130","20220131",
-          "20220201","20220202","20220203","20220204","20220205","20220206","20220207","20220208","20220209","20220210",
-          "20220211","20220212","20220213","20220214","20220215","20220216","20220217","20220218","20220219","20220220",
-          "20220221","20220222","20220223","20220224","20220225","20220226","20220227","20220228"],
       "hours": ["H00","H01","H02","H03","H04","H05","H06","H07","H08","H09","H10","H11","H12","H13","H14","H15","H16","H17","H18","H19","H20","H21","H22","H23"],
       "default_hour": "H02",
       "bounds": [[-85, -180], [85, 180]],
@@ -29,6 +22,27 @@
         "min": 0,
         "max": 100
       }
+    },
+    {
+      "id": "SAOD",
+      "name": "Aerosol Optical Depth (AOD)",
+      "description": "Global hourly AOD over land",
+      "unit": " ",
+      "url_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Aerosols/Global%20Hourly%20AOD/Satellite/{date}/1800x3600_GEO-Ring.AOD.{date}.H{hour}_10KM.webp",
+      "meas_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Aerosols/Global%20Hourly%20AOD/Stations/AOD_Sites_{date}.json",
+      "stations_url": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Aerosols/Global%20Hourly%20AOD/Stations/AOD_Sites_2022.json",
+      "hours": ["H00","H01","H02","H03","H04","H05","H06","H07","H08","H09","H10","H11","H12","H13","H14","H15","H16","H17","H18","H19","H20","H21","H22","H23"],
+      "default_hour": "H02",
+      "bounds": [[-85, -180], [85, 180]],
+      "legend": {
+        "title": "AOD",
+        "unit": " ",
+        "colors": ["rgb(49,54,149)","rgb(74,123,183)","rgb(128,183,214)","rgb(189,226,238)","rgb(238,248,223)","rgb(254,238,165)","rgb(253,191,113)","rgb(246,123,74)","rgb(218,55,42)","rgb(165,0,38)"],
+        "labels": ["10", "20", "30", "40", "50", "60", "70", "80", "90"],
+        "min": 0,
+        "max": 100
+      }
     }
+
   ]
 }
