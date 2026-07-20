@@ -201,6 +201,8 @@ try{
 const r=await fetch(current.stations_url+'?ts='+Date.now())
 if(!r.ok)throw new Error('Failed to load stations: HTTP '+r.status)
 stationsCache=await r.json()
+console.log('stationsCache keys',Object.keys(stationsCache||{}))
+console.log('stationsCache sample',stationsCache?.records?.[0]||stationsCache?.stations?.[0]||stationsCache?.data?.records?.[0]||stationsCache?.features?.[0]||stationsCache)
 }catch(e){console.error(e);status(e.message)}
 }
 function normalizeRecords(x){
