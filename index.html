@@ -194,6 +194,7 @@ $('legend-bar').style.background='linear-gradient(to right,'+(l.colors||[]).join
 const labels=l.labels||[]
 $('legend-labels').innerHTML=labels.map((x,i)=>`<span style="left:${(i+1)*10}%">${x}</span>`).join('')
 }
+console.log('current', current.id, current.legend)
 async function loadStations(){
 if(stationsCache||!current||!current.stations_url)return
 try{
