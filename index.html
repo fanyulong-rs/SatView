@@ -231,13 +231,17 @@ function drawMeas(data){
 if(measLayer)map.removeLayer(measLayer)
 if(!showMeas||!data){measLayer=null;return}
 const records=normalizeRecords(data)
-console.log('sample record', records[0], 'AOD_550nm', records[0]?.AOD_550nm, 'PM2p5', records[0]?.PM2p5, 'value', records[0]?.value)
+// console.log('sample record', records[0], 'AOD_550nm', records[0]?.AOD_550nm, 'PM2p5', records[0]?.PM2p5, 'value', records[0]?.value)
 const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s.Site||s.site||s.id,s]))
 const h=hours24[+$('time-slider').value||0]
 const use=records.map(x=>{
 const s=stmap.get(x.Site||x.site||x.id)||{}
 const lat=+(s.Lat??s.lat??s.latitude??s.Latitude),lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude),v=+(x.AOD_550nm??x.PM2p5??x.value??x.val)
-if(!isFinite(lat)||!isFinite(lon)||!isFinite(v))return null
+if(!isFinite(lat)||!isFinite(lon)||!isFinite(v)){
+console.log('drop', {key:x.Site||x.site||x.id, stationKey:s&& (s.Site||s.site||s.id), lat, lon, v})
+return null
+}
+console.log('matchKey',key,'station?',!!s,'lat',lat,'lon',lon,'v',v)
 //if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
 console.log('records',records.length,'use',use.length)
 return {lat,lon,v,x}
