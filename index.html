@@ -41,7 +41,7 @@ input[type=range]{accent-color:var(--accent)}
 .btn.secondary{background:var(--surface2);color:var(--text)}
 .btn.secondary:hover{border-color:var(--accent)}
 .info{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius);padding:12px;font-size:12px;line-height:1.6;color:var(--text-muted)}
-.legend{position:fixed;right:calc(336px + clamp(12px,2vw,18px));left:auto;bottom:clamp(12px,2vw,16px);z-index:900;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:26px;padding:clamp(6px,1vw,10px) clamp(10px,1.4vw,14px);width:clamp(260px,40vw,700px);max-width:calc(100vw - 380px);box-shadow:0 6px 24px rgba(0,0,0,.12);color:#111}
+.legend{position:fixed;right:calc(336px + clamp(12px,2vw,18px));bottom:clamp(12px,2vw,16px);z-index:900;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:26px;padding:clamp(6px,1vw,10px) clamp(10px,1.4vw,14px);width:clamp(260px,40vw,700px);max-width:calc(100vw - 380px);box-shadow:0 6px 24px rgba(0,0,0,.12);color:#111}
 .legend-row{display:flex;align-items:center;gap:14px;width:100%}
 .legend-title{font-size:16px;font-weight:800;white-space:nowrap;color:#111;line-height:1;flex:0 0 auto;margin:0}
 .legend-bar-wrap{position:relative;flex:1;height:22px}
@@ -67,7 +67,7 @@ input[type=range]{accent-color:var(--accent)}
 :root{--panel-w:86vw}
 .header-badge{display:none}
 .logo-sub{display:none}
-.legend{right:12px;left:12px;bottom:12px;width:auto;max-width:none;min-width:0}
+.legend{right:12px;left:12px;bottom:12px;width:auto;max-width:none}
 .time-float{left:12px;right:12px;bottom:88px;width:auto;max-width:none}
 .time-current{font-size:15px}
 }
@@ -82,8 +82,11 @@ input[type=range]{accent-color:var(--accent)}
 <div class="header-spacer"></div>
 <div class="header-badge" id="updated">Loading</div>
 </header>
+
 <div id="map"></div>
+
 <button id="panel-toggle">›</button>
+
 <aside id="panel">
 <div class="panel-head">
 <div class="panel-title">Product Control</div>
@@ -101,15 +104,41 @@ input[type=range]{accent-color:var(--accent)}
 <div class="info" id="info">Waiting for loading...</div>
 </div>
 </aside>
+
 <div class="time-float">
 <div class="time-current" id="time-current">---- -- -- --:00</div>
 <div class="date-row"><select id="year"></select><select id="month"></select><select id="day"></select></div>
 <div class="time-row"><button class="play-main" id="play">▶</button><input id="time-slider" type="range" min="0" max="23" value="0"></div>
 </div>
+
 <div class="status" id="status">Loading configuration...</div>
-<div class="legend" id="legend" style="display:none"><div class="legend-row"><div class="legend-title" id="legend-title"></div><div class="legend-bar-wrap"><div class="legend-bar" id="legend-bar"></div><div class="legend-labels" id="legend-labels"></div></div></div></div>
+
+<div class="legend" id="legend" style="display:none">
+<div class="legend-row">
+<div class="legend-title" id="legend-title"></div>
+<div class="legend-bar-wrap">
+<div class="legend-bar" id="legend-bar"></div>
+<div class="legend-labels" id="legend-labels"></div>
+</div>
+</div>
+</div>
+
 <script>
-let cfg,products=[],current,overlay,map,countryLayer,showCountries=true,layerVisible=true,timer=null,playing=false,measLayer=null,showMeas=true,measCache={},stationsCache=null
+let cfg
+let products=[]
+let current=null
+let overlay=null
+let map=null
+let countryLayer=null
+let showCountries=true
+let layerVisible=true
+let timer=null
+let playing=false
+let measLayer=null
+let showMeas=true
+let measCache={}
+let stationsCache=null
+
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
 const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
@@ -117,155 +146,510 @@ const pad=n=>String(n).padStart(2,'0')
 const dateCompact=s=>String(s||'').replaceAll('-','')
 const dateValue=()=>`${$('year').value}${$('month').value}${$('day').value}`
 const dateLabel=()=>`${$('year').value}-${$('month').value}-${$('day').value}`
-const urlOf=(p,d,h)=>p?.url_template&&d&&h?p.url_template.replaceAll('{date}',dateCompact(d)).replaceAll('{hour}',h):''
 const daysInMonth=(y,m)=>new Date(+y,+m,0).getDate()
 
-function updateTimeText(){const i=+$('time-slider').value||0;$('time-current').textContent=`${dateLabel()} ${pad(i)}:00`}
-function fillDateControls(){const years=[2021,2022,2023,2024,2025,2026];$('year').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('');$('year').value='2022';fillMonths()}
-function fillMonths(){const old=$('month').value;const ms=[...Array(12)].map((_,i)=>String(i+1).padStart(2,'0'));$('month').innerHTML=ms.map(m=>`<option value="${m}">${m}</option>`).join('');$('month').value=ms.includes(old)?old:'01';fillDays()}
-function fillDays(){const y=$('year').value,m=$('month').value,old=$('day').value,n=daysInMonth(y,m);const ds=[...Array(n)].map((_,i)=>String(i+1).padStart(2,'0'));$('day').innerHTML=ds.map(d=>`<option value="${d}">${d}</option>`).join('');$('day').value=ds.includes(old)?old:'01'}
-function pmColor(v){if(v==null||isNaN(v))return '#999';const cs=[[0,[49,54,149]],[10,[74,123,183]],[20,[128,183,214]],[35,[189,226,238]],[50,[238,248,223]],[60,[254,238,165]],[70,[253,191,113]],[80,[246,123,74]],[90,[218,55,42]],[100,[165,0,38]]];if(v<=cs[0][0])return `rgb(${cs[0][1].join(',')})`;for(let i=1;i<cs.length;i++)if(v<=cs[i][0]){const [x0,c0]=cs[i-1],[x1,c1]=cs[i],t=(v-x0)/(x1-x0),c=c0.map((a,j)=>Math.round(a+(c1[j]-a)*t));return `rgb(${c.join(',')})`}return `rgb(${cs.at(-1)[1].join(',')})`}
+function templateUrl(template,date,hour=''){
+if(!template||!date)return''
+const d=dateCompact(date)
+const year=d.slice(0,4)
+return template
+.replaceAll('{year}',year)
+.replaceAll('{date}',d)
+.replaceAll('{hour}',hour)
+}
+
+function urlOf(product,date,hour){
+return templateUrl(product?.url_template,date,hour)
+}
+
+function updateTimeText(){
+const i=+$('time-slider').value||0
+$('time-current').textContent=`${dateLabel()} ${pad(i)}:00`
+}
+
+function fillDateControls(){
+const years=[2021,2022,2023,2024,2025,2026]
+$('year').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('')
+$('year').value='2022'
+fillMonths()
+}
+
+function fillMonths(){
+const old=$('month').value
+const months=[...Array(12)].map((_,i)=>String(i+1).padStart(2,'0'))
+$('month').innerHTML=months.map(m=>`<option value="${m}">${m}</option>`).join('')
+$('month').value=months.includes(old)?old:'01'
+fillDays()
+}
+
+function fillDays(){
+const year=$('year').value
+const month=$('month').value
+const old=$('day').value
+const count=daysInMonth(year,month)
+const days=[...Array(count)].map((_,i)=>String(i+1).padStart(2,'0'))
+$('day').innerHTML=days.map(d=>`<option value="${d}">${d}</option>`).join('')
+$('day').value=days.includes(old)?old:'01'
+}
+
+function pmColor(v){
+if(v==null||isNaN(v))return'#999'
+const colors=[[0,[49,54,149]],[10,[74,123,183]],[20,[128,183,214]],[35,[189,226,238]],[50,[238,248,223]],[60,[254,238,165]],[70,[253,191,113]],[80,[246,123,74]],[90,[218,55,42]],[100,[165,0,38]]]
+if(v<=colors[0][0])return`rgb(${colors[0][1].join(',')})`
+for(let i=1;i<colors.length;i++){
+if(v<=colors[i][0]){
+const[x0,c0]=colors[i-1]
+const[x1,c1]=colors[i]
+const t=(v-x0)/(x1-x0)
+const color=c0.map((a,j)=>Math.round(a+(c1[j]-a)*t))
+return`rgb(${color.join(',')})`
+}
+}
+return`rgb(${colors.at(-1)[1].join(',')})`
+}
+
+function colorOfValue(v){
+const legend=current?.legend
+if(!legend?.colors?.length)return pmColor(v)
+
+const min=Number(legend.min)
+const max=Number(legend.max)
+const colors=legend.colors
+
+if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min)return colors[0]
+
+const value=Math.max(min,Math.min(max,Number(v)))
+const position=(value-min)/(max-min)
+const index=Math.min(colors.length-1,Math.floor(position*colors.length))
+
+return colors[index]
+}
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,115],3)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'}).addTo(map)
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+maxZoom:8,
+minZoom:2,
+attribution:'&copy; OpenStreetMap'
+}).addTo(map)
 
 async function loadCountries(){
 try{
-const r=await fetch('./Countries.geojson?ts='+Date.now())
-if(!r.ok)throw new Error('Countries.geojson failed: HTTP '+r.status)
-const data=await r.json()
-countryLayer=L.geoJSON(data,{style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}})
+const response=await fetch('./Countries.geojson?ts='+Date.now())
+if(!response.ok)throw new Error('Countries.geojson failed: HTTP '+response.status)
+const data=await response.json()
+countryLayer=L.geoJSON(data,{
+style:{color:'#ffffff',weight:1,opacity:.7,fill:false,interactive:false}
+})
 if(showCountries)countryLayer.addTo(map)
 syncCountryButton()
-}catch(e){console.warn(e);status('Failed to load country boundaries')}
+}catch(error){
+console.error(error)
+status('Failed to load country boundaries')
 }
-function syncCountryButton(){$('toggle-countries').textContent='Countries: '+(showCountries?'On':'Off')}
+}
+
+function syncCountryButton(){
+$('toggle-countries').textContent='Countries: '+(showCountries?'On':'Off')
+}
 
 async function init(){
 try{
 fillDateControls()
 updateTimeText()
-const r=await fetch('./products.json?ts='+Date.now())
-if(!r.ok)throw new Error('products.json failed: HTTP '+r.status)
-cfg=await r.json()
+
+const response=await fetch('./products.json?ts='+Date.now())
+if(!response.ok)throw new Error('products.json failed: HTTP '+response.status)
+
+cfg=await response.json()
 products=cfg.products||[]
+
 if(!products.length)throw new Error('No products found in products.json')
+
 $('updated').textContent='Updated '+(cfg.updated_at||'')
 fillProducts()
-const def=products.find(p=>p.id===cfg.default_product)||products[0]
-$('product').value=def.id
+
+const defaultProduct=products.find(p=>p.id===cfg.default_product)||products[0]
+$('product').value=defaultProduct.id
+
 await loadCountries()
-selectProduct(def.id)
+await selectProduct(defaultProduct.id)
+
 status('Configuration loaded')
-}catch(e){console.error(e);status(e.message);$('product-desc').textContent=e.message}
+}catch(error){
+console.error(error)
+status(error.message)
+$('product-desc').textContent=error.message
 }
-function fillProducts(){$('product').innerHTML=products.map(p=>`<option value="${p.id}">${p.name||p.id}</option>`).join('')}
-function selectProduct(id){
-current=products.find(p=>p.id===id)||products[0]
+}
+
+function fillProducts(){
+$('product').innerHTML=products.map(product=>`<option value="${product.id}">${product.name||product.id}</option>`).join('')
+}
+
+async function selectProduct(id){
+current=products.find(product=>product.id===id)||products[0]
 if(!current)return
+
 $('product-desc').innerHTML=current.description||''
 $('time-slider').value=0
 updateTimeText()
 updateLegend()
-loadStations().then(()=>{updateLayer(true);loadMeas()})
+
+stationsCache=null
+measCache={}
+if(measLayer){
+map.removeLayer(measLayer)
+measLayer=null
 }
-function setHourByIndex(i){i=(i+24)%24;$('time-slider').value=i;updateTimeText();updateLayer(false);if(measCache[dateValue()])drawMeas(measCache[dateValue()])}
+
+await loadStations()
+updateLayer(true)
+await loadMeas()
+}
+
+function setHourByIndex(index){
+index=(index+24)%24
+$('time-slider').value=index
+updateTimeText()
+updateLayer(false)
+loadMeas()
+}
+
 function updateLayer(fit=false){
 if(!current)return
-if(!layerVisible){if(overlay)map.removeLayer(overlay);return}
-const d=dateValue(),h=hours24[+$('time-slider').value||0]
-if(!d||!h){status('Missing date or hour');return}
-const u=urlOf(current,d,h)
-if(!u){status('Invalid URL');return}
-const op=+$('opacity').value/100
+
+if(!layerVisible){
 if(overlay)map.removeLayer(overlay)
-overlay=L.imageOverlay(u,current.bounds,{opacity:op,interactive:false}).addTo(map)
-overlay.on('load',()=>status('Layer loaded'))
-overlay.on('error',()=>status('Image not found: '+d+' '+h))
+return
+}
+
+const date=dateValue()
+const hour=hours24[+$('time-slider').value||0]
+const url=urlOf(current,date,hour)
+
+if(!url){
+status('Invalid image URL')
+return
+}
+
+const opacity=+$('opacity').value/100
+
+if(overlay)map.removeLayer(overlay)
+
+overlay=L.imageOverlay(url,current.bounds,{
+opacity,
+interactive:false
+}).addTo(map)
+
+overlay.on('load',()=>status('Layer loaded: '+date+' '+hour))
+overlay.on('error',()=>status('Image not found: '+date+' '+hour))
+
 if(fit&&current.bounds)map.fitBounds(current.bounds)
-$('info').innerHTML=`Date: ${dateLabel()} ${h.slice(1)}:00`
+
+$('info').innerHTML=`Date: ${dateLabel()} ${hour.slice(1)}:00`
 }
+
 function updateLegend(){
-const l=current?.legend
-if(!l){$('legend').style.display='none';return}
+const legend=current?.legend
+
+if(!legend){
+$('legend').style.display='none'
+return
+}
+
 $('legend').style.display='block'
-$('legend-title').innerHTML=(l.title||current.name||current.id)+(l.unit?' '+l.unit:'')
-$('legend-bar').style.background='linear-gradient(to right,'+(l.colors||[]).join(',')+')'
-const labels=l.labels||[]
-$('legend-labels').innerHTML=labels.map((x,i)=>`<span style="left:${(i+1)*10}%">${x}</span>`).join('')
+$('legend-title').innerHTML=(legend.title||current.name||current.id)+(legend.unit?' '+legend.unit:'')
+$('legend-bar').style.background='linear-gradient(to right,'+(legend.colors||[]).join(',')+')'
+
+const labels=legend.labels||[]
+const min=Number(legend.min)
+const max=Number(legend.max)
+
+$('legend-labels').innerHTML=labels.map(value=>{
+const number=Number(value)
+const position=Number.isFinite(number)&&Number.isFinite(min)&&Number.isFinite(max)&&max>min
+?((number-min)/(max-min))*100
+:50
+return`<span style="left:${position}%">${value}</span>`
+}).join('')
 }
-// console.log('current', current.id, current.legend)
-async function loadStations(){
-if(stationsCache||!current||!current.stations_url)return
-try{
-const r=await fetch(current.stations_url)
-if(!r.ok)throw new Error('Failed to load stations: HTTP '+r.status)
-stationsCache=await r.json()
-console.log('matchKey',x.Site||x.site||x.id,'station?',!!s,'lat',lat,'lon',lon,'v',v)
-}catch(e){console.error(e);status(e.message)}
-}
-function normalizeRecords(x){
-if(!x)return[]
-if(Array.isArray(x))return x
-if(Array.isArray(x.records))return x.records
+
+function normalizeRecords(data){
+if(!data)return[]
+if(Array.isArray(data))return data
+if(Array.isArray(data.records))return data.records
+if(Array.isArray(data.data))return data.data
+if(Array.isArray(data.features))return data.features
 return[]
 }
-function getHourFromDate(v){const d=new Date(+v);return 'H'+String(d.getUTCHours()).padStart(2,'0')}
+
+function stationId(item){
+return item?.Site??item?.site??item?.id??item?.ID??item?.station_id??item?.stationId
+}
+
+function getLat(item){
+return +(item?.Lat??item?.lat??item?.latitude??item?.Latitude)
+}
+
+function getLon(item){
+return +(item?.Lon??item?.lon??item?.lng??item?.longitude??item?.Longitude)
+}
+
+function getValue(item){
+return +(item?.AOD_550nm??item?.PM2p5??item?.PM25??item?.pm25??item?.value??item?.val)
+}
+
+function stationUrl(){
+if(!current?.stations_url)return''
+return templateUrl(current.stations_url,dateValue())
+}
+
+async function loadStations(){
+const url=stationUrl()
+
+if(!url){
+stationsCache=[]
+return
+}
+
+try{
+const response=await fetch(url)
+if(!response.ok)throw new Error('Failed to load station locations: HTTP '+response.status)
+stationsCache=await response.json()
+}catch(error){
+console.error(error)
+stationsCache=[]
+status(error.message)
+}
+}
+
+function measurementCacheKey(){
+return`${current?.id||''}_${dateValue()}_${hours24[+$('time-slider').value||0]}`
+}
+
 async function loadMeas(){
 if(!current)return
-const key=dateValue()
-if(!key)return
-if(measCache[key]){drawMeas(measCache[key]);return}
+
+const key=measurementCacheKey()
+
+if(measCache[key]){
+drawMeas(measCache[key])
+return
+}
+
 try{
-const u=current.meas_template
-if(!u)return
-// const r=await fetch(u.replaceAll('{date}',key)+'?ts='+Date.now())
-const url=u.replaceAll('{date}',key)
-const r=await fetch(url)
-if(!r.ok)throw new Error('Failed to load observations: HTTP '+r.status)
-const data=await r.json()
+const hour=hours24[+$('time-slider').value||0]
+const url=templateUrl(current.meas_template,dateValue(),hour)
+
+if(!url)return
+
+const response=await fetch(url)
+if(!response.ok)throw new Error('Failed to load observations: HTTP '+response.status)
+
+const data=await response.json()
 measCache[key]=data
 drawMeas(data)
-}catch(e){console.error(e);status(e.message)}
+}catch(error){
+console.error(error)
+status(error.message)
+
+if(measLayer){
+map.removeLayer(measLayer)
+measLayer=null
 }
+}
+}
+
 function drawMeas(data){
-if(measLayer)map.removeLayer(measLayer)
-if(!showMeas||!data){measLayer=null;return}
-const records=normalizeRecords(data)
-// console.log('sample record', records[0], 'AOD_550nm', records[0]?.AOD_550nm, 'PM2p5', records[0]?.PM2p5, 'value', records[0]?.value)
-const stmap=new Map((stationsCache?normalizeRecords(stationsCache):[]).map(s=>[s.Site||s.site||s.id,s]))
-const h=hours24[+$('time-slider').value||0]
-const use=records.map(x=>{
-const s=stmap.get(x.Site||x.site||x.id)||{}
-const lat=+(s.Lat??s.lat??s.latitude??s.Latitude),lon=+(s.Lon??s.lon??s.lng??s.longitude??s.Longitude),v=+(x.AOD_550nm??x.PM2p5??x.value??x.val)
-if(!isFinite(lat)||!isFinite(lon)||!isFinite(v)){
-return null
+if(measLayer){
+map.removeLayer(measLayer)
+measLayer=null
 }
-// console.log('matchKey',key,'station?',!!s,'lat',lat,'lon',lon,'v',v)
-//if(x.Date!=null&&getHourFromDate(x.Date)!==h)return null
-// console.log('records',records.length,'use',use.length)
-return {lat,lon,v,x}
+
+if(!showMeas||!data||!current)return
+
+const records=normalizeRecords(data)
+const stationRecords=normalizeRecords(stationsCache)
+
+const stationMap=new Map(
+stationRecords.map(station=>[stationId(station),station])
+)
+
+const bounds=current.bounds||[[-90,-180],[90,180]]
+const south=Number(bounds[0][0])
+const west=Number(bounds[0][1])
+const north=Number(bounds[1][0])
+const east=Number(bounds[1][1])
+
+const points=records.map(record=>{
+const id=stationId(record)
+const station=stationMap.get(id)||{}
+
+const lat=Number.isFinite(getLat(record))?getLat(record):getLat(station)
+const lon=Number.isFinite(getLon(record))?getLon(record):getLon(station)
+const value=getValue(record)
+
+if(!Number.isFinite(lat)||!Number.isFinite(lon)||!Number.isFinite(value))return null
+if(lat<south||lat>north||lon<west||lon>east)return null
+
+return{lat,lon,value,record,station}
 }).filter(Boolean)
 
-measLayer=L.layerGroup(use.map(o=>L.circleMarker([o.lat,o.lon],{radius:1.5,color:'#fff',weight:.7,fillColor:pmColor(o.v),fillOpacity:.9}).bindPopup(`Site: ${o.x.Site||o.x.site||o.x.id||''}<br>Measurements: ${o.v}<br>Date: ${o.x.Date?new Date(o.x.Date).toLocaleString('en-GB',{hour12:false}):''}`))).addTo(map)
-$('info').innerHTML=`Date: ${dateLabel()} ${h.slice(1)}:00<br>Observations: ${use.length} points`
-}
-function stopPlay(){playing=false;if(timer){clearInterval(timer);timer=null}$('play').textContent='▶'}
+measLayer=L.layerGroup(
+points.map(point=>{
+const id=stationId(point.record)||stationId(point.station)||''
+const time=point.record.Date?new Date(point.record.Date).toLocaleString('en-GB',{hour12:false}):`${dateLabel()} ${hours24[+$('time-slider').value||0].slice(1)}:00`
 
-$('product').onchange=e=>{stopPlay();stationsCache=null;measCache={};selectProduct(e.target.value)}
-$('year').onchange=()=>{fillMonths();updateTimeText();updateLayer(true);loadMeas()}
-$('month').onchange=()=>{fillDays();updateTimeText();updateLayer(true);loadMeas()}
-$('day').onchange=()=>{updateTimeText();updateLayer(true);loadMeas()}
-$('time-slider').oninput=e=>setHourByIndex(+e.target.value)
-$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Ⅱ':'▶';if(timer){clearInterval(timer);timer=null}if(playing)timer=setInterval(()=>setHourByIndex((+$('time-slider').value+1)%24),800)}
-$('opacity').oninput=e=>{$('opacity-val').textContent=e.target.value+'%';if(overlay)overlay.setOpacity(+e.target.value/100)}
-$('download').onclick=()=>{if(!current)return status('No layer to download');const d=dateValue(),h=hours24[+$('time-slider').value||0],u=urlOf(current,d,h);if(!u)return status('Missing download URL');const a=document.createElement('a');a.href=u;a.download=u.split('/').pop();a.click()}
-$('fit').onclick=()=>current&&current.bounds&&map.fitBounds(current.bounds)
-$('panel-toggle').onclick=()=>{$('panel').classList.toggle('collapsed');$('panel-toggle').classList.toggle('collapsed');$('panel-toggle').textContent=$('panel').classList.contains('collapsed')?'‹':'›';setTimeout(()=>map.invalidateSize(),260)}
-$('toggle-countries').onclick=()=>{showCountries=!showCountries;if(countryLayer){if(showCountries)countryLayer.addTo(map);else map.removeLayer(countryLayer)}syncCountryButton()}
-$('toggle-layer').onclick=()=>{layerVisible=!layerVisible;$('toggle-layer').textContent='Data Layer: '+(layerVisible?'On':'Off');if(!layerVisible&&overlay)map.removeLayer(overlay);else updateLayer(false)}
-$('toggle-meas').onclick=()=>{showMeas=!showMeas;$('toggle-meas').textContent='Observations: '+(showMeas?'On':'Off');const key=dateValue();if(showMeas){if(measCache[key])drawMeas(measCache[key]);else loadMeas()}else if(measLayer)map.removeLayer(measLayer)}
-$('load-meas').onclick=loadMeas
+return L.circleMarker([point.lat,point.lon],{
+radius:2,
+color:'#ffffff',
+weight:.7,
+fillColor:colorOfValue(point.value),
+fillOpacity:.92
+}).bindPopup(
+`Site: ${id}<br>`+
+`Measurement: ${point.value}<br>`+
+`Date: ${time}`
+)
+})
+).addTo(map)
+
+const hour=hours24[+$('time-slider').value||0]
+$('info').innerHTML=`Date: ${dateLabel()} ${hour.slice(1)}:00<br>Observations: ${points.length} points`
+}
+
+function stopPlay(){
+playing=false
+if(timer){
+clearInterval(timer)
+timer=null
+}
+$('play').textContent='▶'
+}
+
+$('product').onchange=async event=>{
+stopPlay()
+await selectProduct(event.target.value)
+}
+
+$('year').onchange=async()=>{
+fillMonths()
+updateTimeText()
+stationsCache=null
+measCache={}
+await loadStations()
+updateLayer(true)
+await loadMeas()
+}
+
+$('month').onchange=async()=>{
+fillDays()
+updateTimeText()
+stationsCache=null
+measCache={}
+await loadStations()
+updateLayer(true)
+await loadMeas()
+}
+
+$('day').onchange=async()=>{
+updateTimeText()
+measCache={}
+updateLayer(true)
+await loadMeas()
+}
+
+$('time-slider').oninput=event=>setHourByIndex(+event.target.value)
+
+$('play').onclick=()=>{
+playing=!playing
+$('play').textContent=playing?'Ⅱ':'▶'
+
+if(timer){
+clearInterval(timer)
+timer=null
+}
+
+if(playing){
+timer=setInterval(()=>{
+setHourByIndex((+$('time-slider').value+1)%24)
+},800)
+}
+}
+
+$('opacity').oninput=event=>{
+$('opacity-val').textContent=event.target.value+'%'
+if(overlay)overlay.setOpacity(+event.target.value/100)
+}
+
+$('download').onclick=()=>{
+if(!current){
+status('No layer to download')
+return
+}
+
+const date=dateValue()
+const hour=hours24[+$('time-slider').value||0]
+const url=urlOf(current,date,hour)
+
+if(!url){
+status('Missing download URL')
+return
+}
+
+const link=document.createElement('a')
+link.href=url
+link.download=url.split('/').pop()
+link.click()
+}
+
+$('fit').onclick=()=>{
+if(current?.bounds)map.fitBounds(current.bounds)
+}
+
+$('panel-toggle').onclick=()=>{
+$('panel').classList.toggle('collapsed')
+$('panel-toggle').classList.toggle('collapsed')
+$('panel-toggle').textContent=$('panel').classList.contains('collapsed')?'‹':'›'
+setTimeout(()=>map.invalidateSize(),260)
+}
+
+$('toggle-countries').onclick=()=>{
+showCountries=!showCountries
+
+if(countryLayer){
+if(showCountries)countryLayer.addTo(map)
+else map.removeLayer(countryLayer)
+}
+
+syncCountryButton()
+}
+
+$('toggle-layer').onclick=()=>{
+layerVisible=!layerVisible
+$('toggle-layer').textContent='Data Layer: '+(layerVisible?'On':'Off')
+
+if(!layerVisible&&overlay)map.removeLayer(overlay)
+else updateLayer(false)
+}
+
+$('toggle-meas').onclick=()=>{
+showMeas=!showMeas
+$('toggle-meas').textContent='Observations: '+(showMeas?'On':'Off')
+
+if(showMeas)loadMeas()
+else if(measLayer){
+map.removeLayer(measLayer)
+measLayer=null
+}
+}
+
+$('load-meas').onclick=async()=>{
+await loadStations()
+await loadMeas()
+}
+
 init()
 </script>
 </body>
