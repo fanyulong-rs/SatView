@@ -1047,6 +1047,7 @@ async function init(){
     $('product').value=product.id
 
     await loadCountries()
+    updateGibsLayer()
     await selectProduct(product.id)
   }catch(error){
     console.error(error)
