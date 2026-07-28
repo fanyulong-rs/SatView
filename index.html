@@ -11,65 +11,18 @@
 :root{--bg:#0d1117;--surface:#161b22;--surface2:#1f2937;--border:rgba(255,255,255,.08);--accent:#4f73d9;--accent-h:#6f8df0;--text:#e6edf3;--text-muted:#8b949e;--radius:10px;--panel-w:320px;--header-h:52px}
 html,body{height:100%;font-family:'Segoe UI','PingFang SC','Hiragino Sans GB',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
 header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:rgba(13,17,23,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:1100}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.logo-text{font-size:17px;font-weight:600;color:var(--text);letter-spacing:.3px}
-.logo-sub{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}
-.header-spacer{flex:1}
-.header-badge{font-size:11px;color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px}
-#map{position:fixed;top:var(--header-h);left:0;right:0;bottom:0;z-index:0}
-.leaflet-container{background:#0d1117}
-#panel-toggle{position:fixed;top:calc(var(--header-h) + 12px);right:calc(var(--panel-w) + 12px);z-index:1050;width:36px;height:36px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
-#panel-toggle:hover{color:var(--text);border-color:var(--accent)}
-#panel-toggle.collapsed{right:12px}
-#panel{position:fixed;top:var(--header-h);right:0;width:var(--panel-w);bottom:0;background:rgba(22,27,34,.96);backdrop-filter:blur(16px);border-left:1px solid var(--border);z-index:1000;display:flex;flex-direction:column;transition:transform .25s cubic-bezier(.4,0,.2,1);overflow:hidden}
-#panel.collapsed{transform:translateX(100%)}
-.panel-head{padding:18px;border-bottom:1px solid var(--border)}
-.panel-title{font-size:15px;font-weight:600;margin-bottom:6px}
-.panel-desc{font-size:12px;line-height:1.5;color:var(--text-muted)}
-.panel-body{flex:1;overflow:auto;padding:18px}
-.group{margin-bottom:18px}
-label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:8px}
-select,input[type=range]{width:100%}
-select{height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:0 10px;outline:0}
-select:focus{border-color:var(--accent)}
-.range-row{display:flex;align-items:center;gap:10px}
-.range-row span{width:42px;text-align:right;font-size:12px;color:var(--text-muted)}
-input[type=range]{accent-color:var(--accent)}
-.btn{width:100%;height:36px;border:1px solid var(--border);border-radius:8px;background:var(--accent);color:white;cursor:pointer;font-size:13px}
-.btn:hover{background:var(--accent-h)}
-.btn.secondary{background:var(--surface2);color:var(--text)}
-.btn.secondary:hover{border-color:var(--accent)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}.logo-text{font-size:17px;font-weight:600;color:var(--text);letter-spacing:.3px}.logo-sub{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}.header-spacer{flex:1}.header-badge{font-size:11px;color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px}
+#map{position:fixed;top:var(--header-h);left:0;right:0;bottom:0;z-index:0}.leaflet-container{background:#0d1117}
+#panel-toggle{position:fixed;top:calc(var(--header-h) + 12px);right:calc(var(--panel-w) + 12px);z-index:1050;width:36px;height:36px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);cursor:pointer;font-size:16px;transition:all .2s}#panel-toggle.collapsed{right:12px}
+#panel{position:fixed;top:var(--header-h);right:0;width:var(--panel-w);bottom:0;background:rgba(22,27,34,.96);backdrop-filter:blur(16px);border-left:1px solid var(--border);z-index:1000;display:flex;flex-direction:column;transition:transform .25s;overflow:hidden}#panel.collapsed{transform:translateX(100%)}.panel-head{padding:18px;border-bottom:1px solid var(--border)}.panel-title{font-size:15px;font-weight:600;margin-bottom:6px}.panel-desc{font-size:12px;line-height:1.5;color:var(--text-muted)}.panel-body{flex:1;overflow:auto;padding:18px}.group{margin-bottom:18px}
+label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:8px}select,input[type=range]{width:100%}select{height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:0 10px;outline:0}.range-row{display:flex;align-items:center;gap:10px}.range-row span{width:42px;text-align:right;font-size:12px;color:var(--text-muted)}input[type=range]{accent-color:var(--accent)}
+.btn{width:100%;height:36px;border:1px solid var(--border);border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-size:13px}.btn:hover{background:var(--accent-h)}.btn.secondary{background:var(--surface2);color:var(--text)}
 .info{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius);padding:12px;font-size:12px;line-height:1.6;color:var(--text-muted)}
-.status{position:fixed;left:18px;top:calc(var(--header-h) + 14px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted);max-width:min(420px,calc(100vw - 36px))}
-.legend{position:fixed;left:18px;bottom:18px;z-index:900;width:min(620px,calc(100vw - var(--panel-w) - 54px));background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:10px 14px;box-shadow:0 6px 24px rgba(0,0,0,.16);color:#111}
-.legend-row{display:flex;align-items:center;gap:12px;width:100%}
-.legend-title{font-size:14px;font-weight:800;white-space:nowrap;color:#111;line-height:1;flex:0 0 auto}
-.legend-bar-wrap{position:relative;flex:1;height:26px;min-width:80px}
-.legend-bar{height:20px;border-radius:999px;width:100%;margin-top:3px}
-.legend-labels{position:absolute;left:0;right:0;top:0;height:26px;pointer-events:none}
-.legend-labels span{position:absolute;top:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px;line-height:1;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.72);white-space:nowrap}
-.time-float{position:fixed;left:18px;bottom:76px;z-index:960;width:min(420px,calc(100vw - var(--panel-w) - 54px));background:#fff;border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.16);color:#111}
-.time-current{font-size:15px;font-weight:800;margin-bottom:6px;white-space:nowrap}
-.date-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:5px;margin-bottom:6px}
-.date-row select{height:26px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:5px;color:#111;font-size:13px;font-weight:600;padding:0 6px}
-.time-row{display:flex;align-items:center;gap:8px;width:100%}
-.play-main{width:28px;height:28px;border-radius:6px;border:0;background:#5f6edb;color:#fff;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
-.play-main:hover{background:#7080ef}
-#time-slider{flex:1;min-width:0;width:auto;height:8px;appearance:none;-webkit-appearance:none;background:transparent}
-#time-slider::-webkit-slider-runnable-track{height:2px;background:#e5e7eb;border-radius:999px}
-#time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:#5f6edb;margin-top:-4px;border:0}
-#time-slider::-moz-range-track{height:2px;background:#e5e7eb;border-radius:999px}
-#time-slider::-moz-range-thumb{width:10px;height:10px;border:none;border-radius:50%;background:#5f6edb}
-.leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}
-.leaflet-control-attribution a{color:var(--accent-h)!important}
-@media(max-width:720px){
-:root{--panel-w:86vw}
-.header-badge,.logo-sub{display:none}
-.legend{left:12px;right:12px;bottom:12px;width:auto}
-.time-float{left:12px;right:12px;bottom:76px;width:auto}
-.status{left:12px;top:calc(var(--header-h) + 12px)}
-}
+.status{position:fixed;left:18px;top:calc(var(--header-h) + 14px);z-index:900;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-muted)}
+.legend{position:fixed;left:18px;bottom:18px;z-index:900;width:min(620px,calc(100vw - var(--panel-w) - 54px));background:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 6px 24px rgba(0,0,0,.16);color:#111}.legend-row{display:flex;align-items:center;gap:12px}.legend-title{font-size:14px;font-weight:800;white-space:nowrap}.legend-bar-wrap{position:relative;flex:1;height:26px;min-width:80px}.legend-bar{height:20px;border-radius:999px;width:100%;margin-top:3px}.legend-labels{position:absolute;left:0;right:0;top:0;height:26px;pointer-events:none}.legend-labels span{position:absolute;top:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.72)}
+.time-float{position:fixed;left:18px;bottom:76px;z-index:960;width:min(420px,calc(100vw - var(--panel-w) - 54px));background:#fff;border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.16);color:#111}.time-current{font-size:15px;font-weight:800;margin-bottom:6px}.date-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:5px;margin-bottom:6px}.date-row select{height:26px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:5px;color:#111;font-size:13px;font-weight:600;padding:0 6px}.time-row{display:flex;align-items:center;gap:8px}.play-main{width:28px;height:28px;border-radius:6px;border:0;background:#5f6edb;color:#fff;cursor:pointer;flex:0 0 auto}#time-slider{flex:1;width:auto}
+.leaflet-control-attribution{background:rgba(22,27,34,.85)!important;color:var(--text-muted)!important}.leaflet-control-attribution a{color:var(--accent-h)!important}
+@media(max-width:720px){:root{--panel-w:86vw}.header-badge,.logo-sub{display:none}.legend{left:12px;right:12px;bottom:12px;width:auto}.time-float{left:12px;right:12px;bottom:76px;width:auto}.status{left:12px}}
 </style>
 </head>
 <body>
@@ -83,19 +36,36 @@ input[type=range]{accent-color:var(--accent)}
 </header>
 
 <div id="map"></div>
-<button id="panel-toggle">›</button>
+<button id="panel-toggle" aria-label="Toggle control panel">›</button>
 
 <aside id="panel">
 <div class="panel-head">
 <div class="panel-title">Product Control</div>
 <div class="panel-desc" id="product-desc">Reading products.json...</div>
 </div>
+
 <div class="panel-body">
 <div class="group"><label>Remote Sensing Product</label><select id="product"></select></div>
-<div class="group"><label>Layer Opacity</label><div class="range-row"><input id="opacity" type="range" min="0" max="100" value="80"><span id="opacity-val">80%</span></div></div>
-<div class="group"><label>Vector Layer</label><button class="btn secondary" id="toggle-countries">Countries: On</button></div>
+
+<div class="group">
+<label>Layer Opacity</label>
+<div class="range-row">
+<input id="opacity" type="range" min="0" max="100" value="80">
+<span id="opacity-val">80%</span>
+</div>
+</div>
+
+<div class="group"><label>NASA GIBS Satellite Imagery</label>
+<select id="gibs-product">
+<option value="MODIS_Terra_CorrectedReflectance_TrueColor">MODIS Terra True Color</option>
+<option value="MODIS_Aqua_CorrectedReflectance_TrueColor">MODIS Aqua True Color</option>
+</select>
+</div>
+
+<div class="group"><button class="btn secondary" id="toggle-gibs">Satellite Imagery: Off</button></div>
+<div class="group"><button class="btn secondary" id="toggle-countries">Countries: On</button></div>
 <div class="group"><button class="btn secondary" id="toggle-layer">Data Layer: On</button></div>
-<div class="group"><label>Station Observations</label><button class="btn secondary" id="toggle-meas">Observations: On</button></div>
+<div class="group"><button class="btn secondary" id="toggle-meas">Observations: On</button></div>
 <div class="group"><button class="btn secondary" id="load-meas">Load Observations</button></div>
 <div class="group"><button class="btn" id="download">Download Image</button></div>
 <div class="group"><button class="btn secondary" id="fit">Zoom to Layer</button></div>
@@ -106,7 +76,7 @@ input[type=range]{accent-color:var(--accent)}
 <div class="time-float">
 <div class="time-current" id="time-current">---- -- -- --:00</div>
 <div class="date-row"><select id="year"></select><select id="month"></select><select id="day"></select></div>
-<div class="time-row"><button class="play-main" id="play">▶</button><input id="time-slider" type="range" min="0" max="23" value="0"></div>
+<div class="time-row"><button class="play-main" id="play" aria-label="Play animation">▶</button><input id="time-slider" type="range" min="0" max="23" value="0"></div>
 </div>
 
 <div class="status" id="status">Loading configuration...</div>
@@ -136,6 +106,9 @@ let measLayer=null
 let showMeas=true
 let measCache={}
 let stationsCache=null
+
+let gibsLayer=null
+let showGibs=false
 
 const $=id=>document.getElementById(id)
 const status=t=>$('status').textContent=t
@@ -192,13 +165,8 @@ function stationId(item){
 return item?.Site??item?.site??item?.id??item?.ID??item?.station_id??item?.stationId
 }
 
-function getLat(item){
-return +(item?.Lat??item?.lat??item?.latitude??item?.Latitude)
-}
-
-function getLon(item){
-return +(item?.Lon??item?.lon??item?.lng??item?.longitude??item?.Longitude)
-}
+function getLat(item){return +(item?.Lat??item?.lat??item?.latitude??item?.Latitude)}
+function getLon(item){return +(item?.Lon??item?.lon??item?.lng??item?.longitude??item?.Longitude)}
 
 function getValue(item){
 if(current?.id==='SAOD')return +(item?.AOD_550nm??item?.AOD??item?.aod??item?.AOD550??item?.value??item?.val)
@@ -225,21 +193,42 @@ const i=Math.min(legend.colors.length-1,Math.floor(((v-min)/(max-min))*legend.co
 return legend.colors[i]
 }
 
-function stationUrl(){
-return templateUrl(current?.stations_url,dateValue())
-}
-
-function measurementKey(){
-return`${current?.id}_${dateValue()}_${hours24[+$('time-slider').value||0]}`
-}
+function stationUrl(){return templateUrl(current?.stations_url,dateValue())}
+function measurementKey(){return`${current?.id}_${dateValue()}_${hours24[+$('time-slider').value||0]}`}
 
 map=L.map('map',{worldCopyJump:true,zoomControl:true}).setView([25,115],3)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-maxZoom:8,
-minZoom:2,
-attribution:'&copy; OpenStreetMap'
+maxZoom:8,minZoom:2,attribution:'&copy; OpenStreetMap'
 }).addTo(map)
+
+function updateGibsLayer(){
+if(gibsLayer){
+map.removeLayer(gibsLayer)
+gibsLayer=null
+}
+
+if(!showGibs)return
+
+const layerId=$('gibs-product').value
+const date=dateLabel()
+
+gibsLayer=L.tileLayer(
+`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${layerId}/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`,
+{
+minZoom:1,
+maxZoom:9,
+maxNativeZoom:9,
+opacity:.65,
+crossOrigin:true,
+attribution:'NASA GIBS · NASA Earth Science Data and Information System (ESDIS)'
+}
+)
+
+gibsLayer.on('loading',()=>status(`Loading NASA imagery: ${date}`))
+gibsLayer.on('load',()=>status(`NASA imagery loaded: ${date}`))
+gibsLayer.addTo(map)
+}
 
 async function loadCountries(){
 try{
@@ -247,10 +236,7 @@ const response=await fetch('./Countries.geojson?ts='+Date.now())
 if(!response.ok)throw new Error('Countries.geojson failed: HTTP '+response.status)
 countryLayer=L.geoJSON(await response.json(),{style:{color:'#fff',weight:1,opacity:.7,fill:false,interactive:false}})
 if(showCountries)countryLayer.addTo(map)
-}catch(error){
-console.error(error)
-status('Failed to load country boundaries')
-}
+}catch(error){console.error(error);status('Failed to load country boundaries')}
 }
 
 async function loadStations(){
@@ -260,11 +246,7 @@ try{
 const response=await fetch(url)
 if(!response.ok)throw new Error('Failed to load station locations: HTTP '+response.status)
 stationsCache=await response.json()
-}catch(error){
-console.error(error)
-stationsCache=[]
-status(error.message)
-}
+}catch(error){console.error(error);stationsCache=[];status(error.message)}
 }
 
 async function loadMeas(){
@@ -276,10 +258,8 @@ try{
 const hour=hours24[+$('time-slider').value||0]
 const url=templateUrl(current.meas_template,dateValue(),hour)
 if(!url)return
-
 const response=await fetch(url)
 if(!response.ok)throw new Error('Failed to load observations: HTTP '+response.status)
-
 const data=await response.json()
 measCache[key]=data
 drawMeas(data)
@@ -296,11 +276,6 @@ if(!showMeas||!data||!current)return
 
 const records=normalizeRecords(data)
 const stations=new Map(normalizeRecords(stationsCache).map(s=>[stationId(s),s]))
-const bounds=current.bounds||[[-90,-180],[90,180]]
-const south=+bounds[0][0]
-const west=+bounds[0][1]
-const north=+bounds[1][0]
-const east=+bounds[1][1]
 const currentHour=hours24[+$('time-slider').value||0]
 
 const points=records.filter(record=>{
@@ -311,24 +286,18 @@ const station=stations.get(stationId(record))||{}
 const lat=Number.isFinite(getLat(record))?getLat(record):getLat(station)
 const lon=Number.isFinite(getLon(record))?getLon(record):getLon(station)
 const value=getValue(record)
-
 if(!Number.isFinite(lat)||!Number.isFinite(lon)||!Number.isFinite(value))return null
-if(lat<south||lat>north||lon<west||lon>east)return null
-
 return{lat,lon,value,record,station}
 }).filter(Boolean)
 
 measLayer=L.layerGroup(points.map(point=>{
 const id=stationId(point.record)||stationId(point.station)||''
 return L.circleMarker([point.lat,point.lon],{
-radius:2,
-color:'#fff',
-weight:.7,
-fillColor:colorOfValue(point.value),
-fillOpacity:.92
+radius:2,color:'#fff',weight:.7,fillColor:colorOfValue(point.value),fillOpacity:.92
 }).bindPopup(`Site: ${id}<br>Value: ${point.value}<br>Date: ${dateLabel()} ${currentHour.slice(1)}:00`)
 })).addTo(map)
 
+measLayer.bringToFront()
 $('info').innerHTML=`Date: ${dateLabel()} ${currentHour.slice(1)}:00<br>Observations: ${points.length} points`
 }
 
@@ -337,7 +306,7 @@ const legend=current?.legend
 if(!legend){$('legend').style.display='none';return}
 
 $('legend').style.display='block'
-$('legend-title').innerHTML=(legend.title||current.name||current.id)+(legend.unit?' '+legend.unit:'')
+$('legend-title').textContent=(legend.title||current.name||current.id)+(legend.unit?' '+legend.unit:'')
 $('legend-bar').style.background=`linear-gradient(to right,${(legend.colors||[]).join(',')})`
 
 const min=Number(legend.min)
@@ -370,6 +339,9 @@ interactive:false
 overlay.on('load',()=>status(`Layer loaded: ${dateValue()} ${hour}`))
 overlay.on('error',()=>status(`Image not found: ${dateValue()} ${hour}`))
 
+overlay.bringToFront()
+if(measLayer)measLayer.bringToFront()
+
 if(fit&&current.bounds)map.fitBounds(current.bounds)
 $('info').innerHTML=`Date: ${dateLabel()} ${hour.slice(1)}:00`
 }
@@ -378,7 +350,7 @@ async function selectProduct(id){
 current=products.find(p=>p.id===id)||products[0]
 if(!current)return
 
-$('product-desc').innerHTML=current.description||''
+$('product-desc').textContent=current.description||''
 $('time-slider').value=0
 updateTimeText()
 updateLegend()
@@ -396,6 +368,7 @@ function stopPlay(){
 playing=false
 if(timer){clearInterval(timer);timer=null}
 $('play').textContent='▶'
+$('play').setAttribute('aria-label','Play animation')
 }
 
 function setHour(index){
@@ -441,6 +414,7 @@ fillMonths()
 updateTimeText()
 stationsCache=null
 measCache={}
+updateGibsLayer()
 await loadStations()
 updateLayer(true)
 await loadMeas()
@@ -451,6 +425,7 @@ fillDays()
 updateTimeText()
 stationsCache=null
 measCache={}
+updateGibsLayer()
 await loadStations()
 updateLayer(true)
 await loadMeas()
@@ -459,6 +434,7 @@ await loadMeas()
 $('day').onchange=async()=>{
 updateTimeText()
 measCache={}
+updateGibsLayer()
 updateLayer(true)
 await loadMeas()
 }
@@ -468,6 +444,7 @@ $('time-slider').oninput=e=>setHour(+e.target.value)
 $('play').onclick=()=>{
 playing=!playing
 $('play').textContent=playing?'Ⅱ':'▶'
+$('play').setAttribute('aria-label',playing?'Pause animation':'Play animation')
 if(timer){clearInterval(timer);timer=null}
 if(playing)timer=setInterval(()=>setHour((+$('time-slider').value+1)%24),800)
 }
@@ -475,6 +452,16 @@ if(playing)timer=setInterval(()=>setHour((+$('time-slider').value+1)%24),800)
 $('opacity').oninput=e=>{
 $('opacity-val').textContent=e.target.value+'%'
 if(overlay)overlay.setOpacity(+e.target.value/100)
+}
+
+$('toggle-gibs').onclick=()=>{
+showGibs=!showGibs
+$('toggle-gibs').textContent='Satellite Imagery: '+(showGibs?'On':'Off')
+updateGibsLayer()
+}
+
+$('gibs-product').onchange=()=>{
+if(showGibs)updateGibsLayer()
 }
 
 $('toggle-countries').onclick=()=>{
