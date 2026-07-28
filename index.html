@@ -46,6 +46,11 @@ html,body{
 
 .leaflet-container{background:#10151b}
 
+/* Move Leaflet + / - controls down to avoid the header */
+.leaflet-top.leaflet-right{
+  top:58px;
+}
+
 .leaflet-control-zoom{
   border:1px solid var(--border)!important;
   border-radius:8px!important;
@@ -336,7 +341,7 @@ input[type=range]{accent-color:var(--accent)}
   line-height:1.55;
 }
 
-/* Product legend inside the panel */
+/* Product legend */
 .panel-legend{
   margin-top:10px;
   padding:9px;
@@ -405,24 +410,10 @@ input[type=range]{accent-color:var(--accent)}
 
 #panel-toggle.collapsed{left:0}
 
-/* Status */
+/* Status is intentionally hidden */
 .status{
-  position:fixed;
-  top:70px;
-  left:calc(var(--panel-w) + 26px);
-  z-index:900;
-  max-width:360px;
-  padding:7px 10px;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:4px;
-  background:rgba(12,16,20,.82);
-  color:#e1e5e9;
-  font-size:11px;
-  box-shadow:0 2px 10px rgba(0,0,0,.26);
-  transition:left .25s ease;
+  display:none !important;
 }
-
-body.panel-collapsed .status{left:12px}
 
 /* Full-width bottom timeline */
 .time-float{
@@ -522,14 +513,6 @@ body.panel-collapsed .status{left:12px}
   }
 
   #panel-toggle{left:calc(var(--panel-w) + 18px)}
-
-  .status{
-    top:64px;
-    left:12px;
-    max-width:calc(100vw - 72px);
-  }
-
-  #panel:not(.collapsed)~.status{display:none}
 
   .time-float{
     height:var(--timeline-h);
@@ -647,8 +630,6 @@ body.panel-collapsed .status{left:12px}
   </div>
 </aside>
 
-<div class="status" id="status">Loading configuration...</div>
-
 <div class="time-float">
   <div class="time-top">
     <div class="time-current" id="time-current">---- -- -- --:00</div>
@@ -684,7 +665,7 @@ let gibsLayer=null
 let showGibs=false
 
 const $=id=>document.getElementById(id)
-const status=t=>$('status').textContent=t
+const status=()=>{}
 const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
 const pad=n=>String(n).padStart(2,'0')
 const dateCompact=s=>String(s||'').replaceAll('-','')
@@ -798,6 +779,16 @@ function measurementKey(){
   return`${current?.id}_${dateValue()}_${hours24[+$('time-slider').value||0]}`
 }
 
+function bringMeasurementsToFront(){
+  if(!measLayer)return
+
+  measLayer.eachLayer(layer=>{
+    if(typeof layer.bringToFront==='function'){
+      layer.bringToFront()
+    }
+  })
+}
+
 map=L.map('map',{
   worldCopyJump:true,
   zoomControl:false
@@ -834,8 +825,6 @@ function updateGibsLayer(){
     }
   )
 
-  gibsLayer.on('loading',()=>status(`Loading NASA imagery: ${date}`))
-  gibsLayer.on('load',()=>status(`NASA imagery loaded: ${date}`))
   gibsLayer.addTo(map)
 }
 
@@ -860,7 +849,6 @@ async function loadCountries(){
     if(showCountries)countryLayer.addTo(map)
   }catch(error){
     console.error(error)
-    status('Failed to load country boundaries')
   }
 }
 
@@ -883,7 +871,6 @@ async function loadStations(){
   }catch(error){
     console.error(error)
     stationsCache=[]
-    status(error.message)
   }
 }
 
@@ -914,7 +901,6 @@ async function loadMeas(){
     drawMeas(data)
   }catch(error){
     console.error(error)
-    status(error.message)
 
     if(measLayer){
       map.removeLayer(measLayer)
@@ -973,7 +959,7 @@ function drawMeas(data){
     )
   })).addTo(map)
 
-  measLayer.bringToFront()
+  bringMeasurementsToFront()
 
   $('info').innerHTML=
     `Date: ${dateLabel()} ${currentHour.slice(1)}:00 UTC<br>`+
@@ -1028,14 +1014,10 @@ function updateLayer(fit=false){
     interactive:false
   }).addTo(map)
 
-  /* 成功加载提示已移除 */
-  overlay.on('error',()=>{
-    status(`Image not found: ${dateValue()} ${hour}`)
-  })
+  overlay.on('error',()=>{})
 
   overlay.bringToFront()
-
-  if(measLayer)measLayer.bringToFront()
+  bringMeasurementsToFront()
 
   if(fit&&current.bounds)map.fitBounds(current.bounds)
 
@@ -1112,11 +1094,8 @@ async function init(){
 
     await loadCountries()
     await selectProduct(product.id)
-
-    status('Configuration loaded')
   }catch(error){
     console.error(error)
-    status(error.message)
     $('product-desc').textContent=error.message
   }
 }
@@ -1251,8 +1230,6 @@ $('panel-toggle').onclick=()=>{
   $('panel-toggle').classList.toggle('collapsed',isCollapsed)
   $('panel-toggle').textContent=isCollapsed?'›':'‹'
 
-  document.body.classList.toggle('panel-collapsed',isCollapsed)
-
   setTimeout(()=>map.invalidateSize(),260)
 }
 
@@ -1274,8 +1251,6 @@ $('place-search').addEventListener('keydown',async e=>{
   }
 
   try{
-    status('Searching location...')
-
     const response=await fetch(
       `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(q)}`
     )
@@ -1284,12 +1259,9 @@ $('place-search').addEventListener('keydown',async e=>{
 
     if(results?.length){
       map.setView([+results[0].lat,+results[0].lon],8)
-      status(`Location found: ${results[0].display_name}`)
-    }else{
-      status('Location not found')
     }
   }catch(error){
-    status('Search failed')
+    console.error(error)
   }
 })
 
