@@ -770,7 +770,9 @@ function bringMeasurementsToFront(){
 
 map=L.map('map',{
   worldCopyJump:true,
-  zoomControl:false
+  zoomControl:false,
+  minZoom:2,
+  maxZoom:8
 }).setView([25,115],3)
 
 L.control.zoom({position:'topright'}).addTo(map)
@@ -798,7 +800,7 @@ function updateGibsLayer(){
       minZoom:1,
       maxZoom:9,
       maxNativeZoom:9,
-      opacity:.72,
+      opacity:1,
       crossOrigin:true,
       attribution:'NASA GIBS · NASA ESDIS'
     }
