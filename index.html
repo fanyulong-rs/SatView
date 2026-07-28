@@ -46,7 +46,6 @@ html,body{
 
 .leaflet-container{background:#10151b}
 
-/* Move Leaflet + / - controls down to avoid the header */
 .leaflet-top.leaflet-right{
   top:58px;
 }
@@ -341,7 +340,7 @@ input[type=range]{accent-color:var(--accent)}
   line-height:1.55;
 }
 
-/* Product legend */
+/* Product legend: no title, labels centered inside color bar */
 .panel-legend{
   margin-top:10px;
   padding:9px;
@@ -350,45 +349,36 @@ input[type=range]{accent-color:var(--accent)}
   background:rgba(0,0,0,.18);
 }
 
-.panel-legend-title{
-  margin-bottom:6px;
-  overflow:hidden;
-  color:#dce2e8;
-  font-size:11px;
-  font-weight:700;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-}
-
 .panel-legend-bar-wrap{
   position:relative;
-  height:27px;
+  height:24px;
 }
 
 .panel-legend-bar{
   position:absolute;
-  top:11px;
+  top:0;
   left:0;
   width:100%;
-  height:12px;
+  height:24px;
   border:1px solid rgba(255,255,255,.38);
-  border-radius:2px;
+  border-radius:3px;
 }
 
 .panel-legend-labels{
   position:absolute;
   inset:0;
+  z-index:1;
   pointer-events:none;
 }
 
 .panel-legend-labels span{
   position:absolute;
-  top:0;
+  top:50%;
   color:#fff;
   font-size:9px;
   font-weight:700;
   text-shadow:0 1px 2px #000;
-  transform:translateX(-50%);
+  transform:translate(-50%,-50%);
 }
 
 /* Panel toggle */
@@ -410,12 +400,9 @@ input[type=range]{accent-color:var(--accent)}
 
 #panel-toggle.collapsed{left:0}
 
-/* Status is intentionally hidden */
-.status{
-  display:none !important;
-}
+.status{display:none!important}
 
-/* Full-width bottom timeline */
+/* Timeline */
 .time-float{
   position:fixed;
   left:0;
@@ -522,18 +509,14 @@ input[type=range]{accent-color:var(--accent)}
     padding:8px 10px;
   }
 
-  .time-top{
-    justify-content:space-between;
-  }
+  .time-top{justify-content:space-between}
 
   .time-current{
     min-width:auto;
     font-size:13px;
   }
 
-  .date-row select{
-    width:54px;
-  }
+  .date-row select{width:54px}
 }
 </style>
 </head>
@@ -578,7 +561,6 @@ input[type=range]{accent-color:var(--accent)}
       <select id="product"></select>
 
       <div class="panel-legend" id="legend" style="display:none">
-        <div class="panel-legend-title" id="legend-title"></div>
         <div class="panel-legend-bar-wrap">
           <div class="panel-legend-bar" id="legend-bar"></div>
           <div class="panel-legend-labels" id="legend-labels"></div>
@@ -746,7 +728,6 @@ function getValue(item){
 function getRecordHour(item){
   const raw=item?.Date??item?.date??item?.datetime??item?.time??item?.Time
   if(raw==null)return null
-
   if(typeof raw==='string'&&/^H\d{2}$/.test(raw))return raw
 
   const t=new Date(raw).getTime()
@@ -783,9 +764,7 @@ function bringMeasurementsToFront(){
   if(!measLayer)return
 
   measLayer.eachLayer(layer=>{
-    if(typeof layer.bringToFront==='function'){
-      layer.bringToFront()
-    }
+    if(typeof layer.bringToFront==='function')layer.bringToFront()
   })
 }
 
@@ -823,18 +802,13 @@ function updateGibsLayer(){
       crossOrigin:true,
       attribution:'NASA GIBS · NASA ESDIS'
     }
-  )
-
-  gibsLayer.addTo(map)
+  ).addTo(map)
 }
 
 async function loadCountries(){
   try{
     const response=await fetch('./Countries.geojson?ts='+Date.now())
-
-    if(!response.ok){
-      throw new Error('Countries.geojson failed: HTTP '+response.status)
-    }
+    if(!response.ok)throw new Error('Countries.geojson failed: HTTP '+response.status)
 
     countryLayer=L.geoJSON(await response.json(),{
       style:{
@@ -862,11 +836,7 @@ async function loadStations(){
 
   try{
     const response=await fetch(url)
-
-    if(!response.ok){
-      throw new Error('Failed to load station locations: HTTP '+response.status)
-    }
-
+    if(!response.ok)throw new Error('Failed to load station locations: HTTP '+response.status)
     stationsCache=await response.json()
   }catch(error){
     console.error(error)
@@ -887,14 +857,10 @@ async function loadMeas(){
   try{
     const hour=hours24[+$('time-slider').value||0]
     const url=templateUrl(current.meas_template,dateValue(),hour)
-
     if(!url)return
 
     const response=await fetch(url)
-
-    if(!response.ok){
-      throw new Error('Failed to load observations: HTTP '+response.status)
-    }
+    if(!response.ok)throw new Error('Failed to load observations: HTTP '+response.status)
 
     const data=await response.json()
     measCache[key]=data
@@ -935,10 +901,7 @@ function drawMeas(data){
       const lon=Number.isFinite(getLon(record))?getLon(record):getLon(station)
       const value=getValue(record)
 
-      if(!Number.isFinite(lat)||!Number.isFinite(lon)||!Number.isFinite(value)){
-        return null
-      }
-
+      if(!Number.isFinite(lat)||!Number.isFinite(lon)||!Number.isFinite(value))return null
       return{lat,lon,value,record,station}
     })
     .filter(Boolean)
@@ -976,9 +939,6 @@ function updateLegend(){
 
   $('legend').style.display='block'
 
-  $('legend-title').textContent=
-    (legend.title||current.name||current.id)+(legend.unit?' '+legend.unit:'')
-
   $('legend-bar').style.background=
     `linear-gradient(to right,${(legend.colors||[]).join(',')})`
 
@@ -987,7 +947,6 @@ function updateLegend(){
 
   $('legend-labels').innerHTML=(legend.labels||[]).map(label=>{
     const value=Number(label)
-
     const left=Number.isFinite(value)&&max>min
       ?((value-min)/(max-min))*100
       :50
@@ -1015,7 +974,6 @@ function updateLayer(fit=false){
   }).addTo(map)
 
   overlay.on('error',()=>{})
-
   overlay.bringToFront()
   bringMeasurementsToFront()
 
@@ -1072,24 +1030,18 @@ async function init(){
     updateTimeText()
 
     const response=await fetch('./products.json?ts='+Date.now())
-
-    if(!response.ok){
-      throw new Error('products.json failed: HTTP '+response.status)
-    }
+    if(!response.ok)throw new Error('products.json failed: HTTP '+response.status)
 
     cfg=await response.json()
     products=cfg.products||[]
 
-    if(!products.length){
-      throw new Error('No products found in products.json')
-    }
+    if(!products.length)throw new Error('No products found in products.json')
 
     $('product').innerHTML=products.map(p=>
       `<option value="${p.id}">${p.name||p.id}</option>`
     ).join('')
 
     const product=products.find(p=>p.id===cfg.default_product)||products[0]
-
     $('product').value=product.id
 
     await loadCountries()
@@ -1141,10 +1093,7 @@ $('play').onclick=()=>{
   playing=!playing
 
   $('play').textContent=playing?'Ⅱ':'▶'
-  $('play').setAttribute(
-    'aria-label',
-    playing?'Pause animation':'Play animation'
-  )
+  $('play').setAttribute('aria-label',playing?'Pause animation':'Play animation')
 
   if(timer){
     clearInterval(timer)
