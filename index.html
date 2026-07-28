@@ -45,10 +45,7 @@ html,body{
 }
 
 .leaflet-container{background:#10151b}
-
-.leaflet-top.leaflet-right{
-  top:58px;
-}
+.leaflet-top.leaflet-right{top:58px}
 
 .leaflet-control-zoom{
   border:1px solid var(--border)!important;
@@ -75,7 +72,6 @@ html,body{
 
 .leaflet-control-attribution a{color:#8bc4ff!important}
 
-/* Header */
 header{
   position:fixed;
   top:0;
@@ -171,7 +167,6 @@ header{
 
 .header-button:hover{background:var(--surface3)}
 
-/* Left floating control panel */
 #panel{
   position:fixed;
   top:66px;
@@ -189,9 +184,7 @@ header{
   transition:transform .25s ease;
 }
 
-#panel.collapsed{
-  transform:translateX(calc(-100% - 18px));
-}
+#panel.collapsed{transform:translateX(calc(-100% - 18px))}
 
 .panel-tabs{
   display:flex;
@@ -212,12 +205,7 @@ header{
 }
 
 .panel-tab:last-child{border-right:0}
-
-.panel-tab.active{
-  background:var(--accent);
-  color:#fff;
-}
-
+.panel-tab.active{background:var(--accent);color:#fff}
 .panel-tab:hover:not(.active){background:#313842}
 
 .panel-head{
@@ -252,10 +240,7 @@ header{
   border-bottom:1px solid rgba(255,255,255,.07);
 }
 
-.group:last-child{
-  padding-bottom:0;
-  border-bottom:0;
-}
+.group:last-child{padding-bottom:0;border-bottom:0}
 
 label{
   display:block;
@@ -280,11 +265,7 @@ select{
   font-size:12px;
 }
 
-#gibs-product{
-  text-align:center;
-  text-align-last:center;
-}
-
+#gibs-product{text-align:center;text-align-last:center}
 #gibs-product option{text-align:center}
 
 .range-row{
@@ -322,12 +303,7 @@ input[type=range]{accent-color:var(--accent)}
 }
 
 .btn:hover{background:var(--accent-hover)}
-
-.btn.secondary{
-  background:#2a3039;
-  color:#e7ebef;
-}
-
+.btn.secondary{background:#2a3039;color:#e7ebef}
 .btn.secondary:hover{background:#39424d}
 
 .info{
@@ -340,7 +316,6 @@ input[type=range]{accent-color:var(--accent)}
   line-height:1.55;
 }
 
-/* Product legend: no title, labels centered inside color bar */
 .panel-legend{
   margin-top:10px;
   padding:9px;
@@ -349,10 +324,7 @@ input[type=range]{accent-color:var(--accent)}
   background:rgba(0,0,0,.18);
 }
 
-.panel-legend-bar-wrap{
-  position:relative;
-  height:19px;
-}
+.panel-legend-bar-wrap{position:relative;height:19px}
 
 .panel-legend-bar{
   position:absolute;
@@ -381,7 +353,6 @@ input[type=range]{accent-color:var(--accent)}
   transform:translate(-50%,-50%);
 }
 
-/* Panel toggle */
 #panel-toggle{
   position:fixed;
   top:74px;
@@ -399,10 +370,8 @@ input[type=range]{accent-color:var(--accent)}
 }
 
 #panel-toggle.collapsed{left:0}
-
 .status{display:none!important}
 
-/* Timeline */
 .time-float{
   position:fixed;
   left:0;
@@ -436,10 +405,7 @@ input[type=range]{accent-color:var(--accent)}
   white-space:nowrap;
 }
 
-.date-row{
-  display:flex;
-  gap:5px;
-}
+.date-row{display:flex;gap:5px}
 
 .date-row select{
   width:auto;
@@ -474,11 +440,46 @@ input[type=range]{accent-color:var(--accent)}
 
 .play-main:hover{background:var(--accent-hover)}
 
-#time-slider{
+.time-slider-wrap{
+  position:relative;
   flex:1;
-  width:auto;
+  min-width:100px;
+}
+
+#time-slider{
+  width:100%;
   min-width:100px;
   accent-color:#4e9ae8;
+}
+
+#time-hover-tip{
+  position:absolute;
+  bottom:36px;
+  left:0;
+  z-index:1300;
+  display:none;
+  padding:5px 8px;
+  border:1px solid rgba(255,255,255,.32);
+  border-radius:4px;
+  background:rgba(12,16,22,.94);
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  line-height:1;
+  white-space:nowrap;
+  pointer-events:none;
+  transform:translateX(-50%);
+  box-shadow:0 3px 10px rgba(0,0,0,.4);
+}
+
+#time-hover-tip::after{
+  content:"";
+  position:absolute;
+  top:100%;
+  left:50%;
+  border:5px solid transparent;
+  border-top-color:rgba(12,16,22,.94);
+  transform:translateX(-50%);
 }
 
 @media(max-width:720px){
@@ -541,7 +542,6 @@ input[type=range]{accent-color:var(--accent)}
 </header>
 
 <div id="map"></div>
-
 <button id="panel-toggle" aria-label="Toggle control panel">‹</button>
 
 <aside id="panel">
@@ -579,12 +579,8 @@ input[type=range]{accent-color:var(--accent)}
     <div class="group">
       <label>Basemap Control</label>
       <select id="gibs-product">
-        <option value="MODIS_Terra_CorrectedReflectance_TrueColor">
-          Terra/MODIS Observations (10:30)
-        </option>
-        <option value="MODIS_Aqua_CorrectedReflectance_TrueColor">
-          Aqua/MODIS Observations (13:30)
-        </option>
+        <option value="MODIS_Terra_CorrectedReflectance_TrueColor">Terra/MODIS Observations (10:30)</option>
+        <option value="MODIS_Aqua_CorrectedReflectance_TrueColor">Aqua/MODIS Observations (13:30)</option>
       </select>
     </div>
 
@@ -624,7 +620,11 @@ input[type=range]{accent-color:var(--accent)}
 
   <div class="time-row">
     <button class="play-main" id="play" aria-label="Play animation">▶</button>
-    <input id="time-slider" type="range" min="0" max="23" value="0">
+
+    <div class="time-slider-wrap">
+      <input id="time-slider" type="range" min="0" max="23" value="0">
+      <div id="time-hover-tip">00:00</div>
+    </div>
   </div>
 </div>
 
@@ -1094,7 +1094,6 @@ $('time-slider').oninput=e=>setHour(+e.target.value)
 
 $('play').onclick=()=>{
   playing=!playing
-
   $('play').textContent=playing?'Ⅱ':'▶'
   $('play').setAttribute('aria-label',playing?'Pause animation':'Play animation')
 
@@ -1209,12 +1208,34 @@ $('place-search').addEventListener('keydown',async e=>{
 
     const results=await response.json()
 
-    if(results?.length){
-      map.setView([+results[0].lat,+results[0].lon],8)
-    }
+    if(results?.length)map.setView([+results[0].lat,+results[0].lon],8)
   }catch(error){
     console.error(error)
   }
+})
+
+const timeSlider=$('time-slider')
+const timeHoverTip=$('time-hover-tip')
+
+function updateHoverHour(event){
+  const rect=timeSlider.getBoundingClientRect()
+  const x=Math.max(0,Math.min(event.clientX-rect.left,rect.width))
+  const ratio=x/rect.width
+  const min=Number(timeSlider.min)
+  const max=Number(timeSlider.max)
+  const hour=Math.round(min+ratio*(max-min))
+
+  timeHoverTip.textContent=`${pad(hour)}:00`
+
+  const safeX=Math.max(22,Math.min(x,rect.width-22))
+  timeHoverTip.style.left=`${safeX}px`
+  timeHoverTip.style.display='block'
+}
+
+timeSlider.addEventListener('pointerenter',updateHoverHour)
+timeSlider.addEventListener('pointermove',updateHoverHour)
+timeSlider.addEventListener('pointerleave',()=>{
+  timeHoverTip.style.display='none'
 })
 
 init()
