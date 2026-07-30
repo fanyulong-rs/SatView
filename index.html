@@ -341,6 +341,7 @@ function updateGibsLayer(){
     source:'gibs-source',
     paint:{'raster-opacity':1}
   })
+  bringCountriesToTop()
 }
 
 async function loadCountries(){
@@ -409,6 +410,8 @@ function updateLayer(fit=false){
       'raster-opacity':+$('opacity').value/100
     }
   })
+
+  bringCountriesToTop()
 
   if(fit){
     map.fitBounds([[west,south],[east,north]],{
@@ -586,6 +589,12 @@ function setHour(index){
   updateTimeText()
   updateLayer()
   loadMeas()
+}
+
+function bringCountriesToTop(){
+  if(map?.getLayer('countries-line')){
+    map.moveLayer('countries-line')
+  }
 }
 
 async function init(){
