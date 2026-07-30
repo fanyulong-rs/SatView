@@ -31,7 +31,7 @@
       "unit": "μg/m³",
       "url_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/Satellite/{year}/{date}/1800x3600_{date}-{hour}_SPM2p5.webp",
       "meas_template": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/Stations/{year}/PM2.5_Sites_{date}.json",
-      "stations_url": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/PM2.5_Sites_2022.json",
+      "stations_url": "https://1854312207.cdn.123clouddisk.com/1854312207/SatView/Air%20Pollutants/Global%20Hourly%20PM2.5/PM2.5_Sites_{year}.json",
       "hours": ["H00","H01","H02","H03","H04","H05","H06","H07","H08","H09","H10","H11","H12","H13","H14","H15","H16","H17","H18","H19","H20","H21","H22","H23"],
       "default_hour": "H02",
       "bounds": [[-85, -180], [85, 180]],
