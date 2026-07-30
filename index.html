@@ -5,519 +5,80 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SatView · Remote Sensing Viewer</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/@openmeteo/weather-map-layer@0.0.19/dist/index.js"></script>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
-  --bg:#0d1117;
-  --surface:#171b22;
-  --surface2:#242a33;
-  --surface3:#303846;
-  --border:rgba(255,255,255,.13);
-  --accent:#377dc5;
-  --accent-hover:#4d97e6;
-  --text:#f2f4f7;
-  --text-muted:#aeb6c2;
-  --panel-w:300px;
-  --timeline-h:96px;
+  --bg:#0d1117;--surface:#171b22;--surface2:#242a33;--surface3:#303846;
+  --border:rgba(255,255,255,.13);--accent:#377dc5;--accent-hover:#4d97e6;
+  --text:#f2f4f7;--text-muted:#aeb6c2;--panel-w:300px;--timeline-h:96px
 }
+html,body{width:100%;height:100%;overflow:hidden;font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text)}
+#map{position:fixed;top:0;left:0;right:0;bottom:var(--timeline-h);z-index:0;background:#111}
+.maplibregl-ctrl-top-right{top:58px}
+.maplibregl-ctrl-group{border:1px solid var(--border)!important;border-radius:8px!important;overflow:hidden;background:rgba(20,25,32,.93)!important;box-shadow:0 3px 12px rgba(0,0,0,.32)!important}
+.maplibregl-ctrl-group button{width:36px;height:36px;background-color:transparent!important}
+.maplibregl-ctrl-group button:hover{background-color:var(--surface3)!important}
+.maplibregl-ctrl-attrib{color:#ddd!important;background:rgba(0,0,0,.65)!important}
+.maplibregl-ctrl-attrib a{color:#8bc4ff!important}
 
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-
-#map{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:var(--timeline-h);
-  z-index:0;
-  background:#111;
-}
-
-.leaflet-container{background:#10151b}
-.leaflet-top.leaflet-right{top:58px}
-
-.leaflet-control-zoom{
-  border:1px solid var(--border)!important;
-  border-radius:8px!important;
-  overflow:hidden;
-  box-shadow:0 3px 12px rgba(0,0,0,.32)!important;
-}
-
-.leaflet-control-zoom a{
-  width:36px!important;
-  height:36px!important;
-  line-height:36px!important;
-  background:rgba(20,25,32,.93)!important;
-  color:#fff!important;
-  border-color:var(--border)!important;
-}
-
-.leaflet-control-zoom a:hover{background:var(--surface3)!important}
-
-.leaflet-control-attribution{
-  color:#ddd!important;
-  background:rgba(0,0,0,.65)!important;
-}
-
-.leaflet-control-attribution a{color:#8bc4ff!important}
-
-header{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  height:56px;
-  z-index:1200;
-  display:flex;
-  align-items:center;
-  padding:0 14px;
-  gap:14px;
-  background:linear-gradient(90deg,rgba(8,12,16,.95),rgba(8,12,16,.68),transparent);
-  pointer-events:none;
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color:#fff;
-  text-decoration:none;
-  pointer-events:auto;
-}
-
-.logo-icon{
-  width:38px;
-  height:38px;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(255,255,255,.3);
-  border-radius:50%;
-  background:linear-gradient(135deg,#1d68b3,#804bb2);
-  box-shadow:0 3px 10px rgba(0,0,0,.3);
-  font-size:20px;
-}
-
-.logo-text{
-  font-size:22px;
-  line-height:21px;
-  font-weight:600;
-  letter-spacing:.4px;
-}
-
-.logo-sub{
-  margin-top:3px;
-  color:#d3d8df;
-  font-size:9px;
-  letter-spacing:1.3px;
-  text-transform:uppercase;
-}
-
-.search-bar{
-  width:min(410px,40vw);
-  height:38px;
-  display:flex;
-  align-items:center;
-  gap:9px;
-  margin-left:auto;
-  padding:0 11px;
-  border:1px solid rgba(255,255,255,.16);
-  border-radius:4px;
-  background:rgba(17,22,28,.9);
-  pointer-events:auto;
-}
-
+header{position:fixed;top:0;left:0;right:0;height:56px;z-index:1200;display:flex;align-items:center;padding:0 14px;gap:14px;background:linear-gradient(90deg,rgba(8,12,16,.95),rgba(8,12,16,.68),transparent);pointer-events:none}
+.logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;pointer-events:auto}
+.logo-icon{width:38px;height:38px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.3);border-radius:50%;background:linear-gradient(135deg,#1d68b3,#804bb2);box-shadow:0 3px 10px rgba(0,0,0,.3);font-size:20px}
+.logo-text{font-size:22px;line-height:21px;font-weight:600;letter-spacing:.4px}
+.logo-sub{margin-top:3px;color:#d3d8df;font-size:9px;letter-spacing:1.3px;text-transform:uppercase}
+.search-bar{width:min(410px,40vw);height:38px;display:flex;align-items:center;gap:9px;margin-left:auto;padding:0 11px;border:1px solid rgba(255,255,255,.16);border-radius:4px;background:rgba(17,22,28,.9);pointer-events:auto}
 .search-icon{color:#ddd;font-size:18px}
-
-.search-bar input{
-  flex:1;
-  min-width:0;
-  border:0;
-  outline:0;
-  color:#fff;
-  background:transparent;
-  font-size:12px;
-}
-
+.search-bar input{flex:1;min-width:0;border:0;outline:0;color:#fff;background:transparent;font-size:12px}
 .search-bar input::placeholder{color:#a9b0b8}
-
-.header-button{
-  width:36px;
-  height:36px;
-  display:grid;
-  place-items:center;
-  border:1px solid var(--border);
-  border-radius:5px;
-  background:rgba(20,25,32,.9);
-  color:#fff;
-  cursor:pointer;
-  font-size:16px;
-  pointer-events:auto;
-}
-
+.header-button{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--border);border-radius:5px;background:rgba(20,25,32,.9);color:#fff;cursor:pointer;font-size:16px;pointer-events:auto}
 .header-button:hover{background:var(--surface3)}
 
-#panel{
-  position:fixed;
-  top:66px;
-  left:12px;
-  z-index:1100;
-  width:var(--panel-w);
-  max-height:calc(100vh - var(--timeline-h) - 82px);
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.16);
-  border-radius:5px;
-  background:rgba(25,29,35,.96);
-  box-shadow:0 8px 26px rgba(0,0,0,.4);
-  transition:transform .25s ease;
-}
-
+#panel{position:fixed;top:66px;left:12px;z-index:1100;width:var(--panel-w);max-height:calc(100vh - var(--timeline-h) - 82px);display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(255,255,255,.16);border-radius:5px;background:rgba(25,29,35,.96);box-shadow:0 8px 26px rgba(0,0,0,.4);transition:transform .25s ease}
 #panel.collapsed{transform:translateX(calc(-100% - 18px))}
-
-.panel-tabs{
-  display:flex;
-  height:42px;
-  border-bottom:1px solid var(--border);
-  background:#20252d;
-}
-
-.panel-tab{
-  flex:1;
-  border:0;
-  border-right:1px solid var(--border);
-  background:transparent;
-  color:#cfd5dc;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:600;
-}
-
-.panel-tab:last-child{border-right:0}
-.panel-tab.active{background:var(--accent);color:#fff}
-.panel-tab:hover:not(.active){background:#313842}
-
-.panel-head{
-  padding:13px 14px 11px;
-  border-bottom:1px solid var(--border);
-}
-
-.panel-title{
-  margin-bottom:5px;
-  font-size:14px;
-  font-weight:700;
-}
-
-.panel-desc{
-  color:var(--text-muted);
-  font-size:11px;
-  line-height:1.45;
-}
-
-.panel-body{
-  flex:1;
-  overflow:auto;
-  padding:14px;
-}
-
-.panel-body::-webkit-scrollbar{width:7px}
-.panel-body::-webkit-scrollbar-thumb{background:#4a5360;border-radius:8px}
-
-.group{
-  margin-bottom:14px;
-  padding-bottom:13px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-}
-
-.group:last-child{padding-bottom:0;border-bottom:0}
-
-label{
-  display:block;
-  margin-bottom:7px;
-  color:#cbd2da;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.35px;
-  text-transform:uppercase;
-}
-
+.panel-tabs{display:flex;height:42px;border-bottom:1px solid var(--border);background:#20252d}
+.panel-tab{flex:1;border:0;border-right:1px solid var(--border);background:transparent;color:#cfd5dc;cursor:pointer;font-size:12px;font-weight:600}
+.panel-tab:last-child{border-right:0}.panel-tab.active{background:var(--accent);color:#fff}.panel-tab:hover:not(.active){background:#313842}
+.panel-head{padding:13px 14px 11px;border-bottom:1px solid var(--border)}
+.panel-title{margin-bottom:5px;font-size:14px;font-weight:700}.panel-desc{color:var(--text-muted);font-size:11px;line-height:1.45}
+.panel-body{flex:1;overflow:auto;padding:14px}.panel-body::-webkit-scrollbar{width:7px}.panel-body::-webkit-scrollbar-thumb{background:#4a5360;border-radius:8px}
+.group{margin-bottom:14px;padding-bottom:13px;border-bottom:1px solid rgba(255,255,255,.07)}.group:last-child{padding-bottom:0;border-bottom:0}
+label{display:block;margin-bottom:7px;color:#cbd2da;font-size:11px;font-weight:700;letter-spacing:.35px;text-transform:uppercase}
 select,input[type=range]{width:100%}
-
-select{
-  height:34px;
-  padding:0 9px;
-  border:1px solid var(--border);
-  border-radius:4px;
-  outline:0;
-  background:#2a3039;
-  color:#fff;
-  font-size:12px;
-}
-
-#gibs-product{text-align:center;text-align-last:center}
-#gibs-product option{text-align:center}
-
-.range-row{
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.range-row span{
-  width:39px;
-  color:var(--text-muted);
-  font-size:12px;
-  text-align:right;
-}
-
+select{height:34px;padding:0 9px;border:1px solid var(--border);border-radius:4px;outline:0;background:#2a3039;color:#fff;font-size:12px}
+#gibs-product{text-align:center;text-align-last:center}#gibs-product option{text-align:center}
+.range-row{display:flex;align-items:center;gap:9px}.range-row span{width:39px;color:var(--text-muted);font-size:12px;text-align:right}
 input[type=range]{accent-color:var(--accent)}
+.button-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.btn{width:100%;min-height:34px;padding:6px 9px;border:1px solid var(--border);border-radius:4px;background:var(--accent);color:#fff;cursor:pointer;font-size:12px;font-weight:600}
+.btn:hover{background:var(--accent-hover)}.btn.secondary{background:#2a3039;color:#e7ebef}.btn.secondary:hover{background:#39424d}
+.info{padding:10px;border:1px solid rgba(88,153,230,.35);border-radius:4px;background:rgba(42,99,166,.14);color:#c5d6e9;font-size:11px;line-height:1.55}
+.panel-legend{margin-top:10px;padding:9px;border:1px solid rgba(255,255,255,.12);border-radius:4px;background:rgba(0,0,0,.18)}
+.panel-legend-bar-wrap{position:relative;height:19px}.panel-legend-bar{position:absolute;top:0;left:0;width:100%;height:19px;border:1px solid rgba(255,255,255,.38);border-radius:3px}
+.panel-legend-labels{position:absolute;inset:0;z-index:1;pointer-events:none}.panel-legend-labels span{position:absolute;top:50%;color:#fff;font-size:10px;font-weight:700;text-shadow:0 1px 2px #000;transform:translate(-50%,-50%)}
 
-.button-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-}
-
-.btn{
-  width:100%;
-  min-height:34px;
-  padding:6px 9px;
-  border:1px solid var(--border);
-  border-radius:4px;
-  background:var(--accent);
-  color:#fff;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:600;
-}
-
-.btn:hover{background:var(--accent-hover)}
-.btn.secondary{background:#2a3039;color:#e7ebef}
-.btn.secondary:hover{background:#39424d}
-
-.info{
-  padding:10px;
-  border:1px solid rgba(88,153,230,.35);
-  border-radius:4px;
-  background:rgba(42,99,166,.14);
-  color:#c5d6e9;
-  font-size:11px;
-  line-height:1.55;
-}
-
-.panel-legend{
-  margin-top:10px;
-  padding:9px;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:4px;
-  background:rgba(0,0,0,.18);
-}
-
-.panel-legend-bar-wrap{position:relative;height:19px}
-
-.panel-legend-bar{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:19px;
-  border:1px solid rgba(255,255,255,.38);
-  border-radius:3px;
-}
-
-.panel-legend-labels{
-  position:absolute;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-}
-
-.panel-legend-labels span{
-  position:absolute;
-  top:50%;
-  color:#fff;
-  font-size:10px;
-  font-weight:700;
-  text-shadow:0 1px 2px #000;
-  transform:translate(-50%,-50%);
-}
-
-#panel-toggle{
-  position:fixed;
-  top:74px;
-  left:calc(var(--panel-w) + 20px);
-  z-index:1150;
-  width:29px;
-  height:42px;
-  border:1px solid var(--border);
-  border-radius:0 5px 5px 0;
-  background:rgba(25,29,35,.95);
-  color:#fff;
-  cursor:pointer;
-  font-size:20px;
-  transition:left .25s ease;
-}
-
+#panel-toggle{position:fixed;top:74px;left:calc(var(--panel-w) + 20px);z-index:1150;width:29px;height:42px;border:1px solid var(--border);border-radius:0 5px 5px 0;background:rgba(25,29,35,.95);color:#fff;cursor:pointer;font-size:20px;transition:left .25s ease}
 #panel-toggle.collapsed{left:0}
-.status{display:none!important}
 
-.time-float{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  z-index:1000;
-  width:100%;
-  height:var(--timeline-h);
-  display:flex;
-  align-items:center;
-  gap:16px;
-  padding:12px 18px 14px;
-  border-top:1px solid rgba(255,255,255,.22);
-  background:rgba(20,24,30,.96);
-  color:#fff;
-  box-shadow:0 -5px 20px rgba(0,0,0,.32);
-}
-
-.time-top{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex:0 0 auto;
-}
-
-.time-current{
-  min-width:152px;
-  color:#fff;
-  font-size:17px;
-  font-weight:700;
-  white-space:nowrap;
-}
-
-.date-row{display:flex;gap:5px}
-
-.date-row select{
-  width:auto;
-  height:30px;
-  padding:0 7px;
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:3px;
-  background:#323944;
-  color:#fff;
-  font-size:12px;
-}
-
-.time-row{
-  display:flex;
-  align-items:center;
-  flex:1;
-  min-width:0;
-  gap:12px;
-}
-
-.play-main{
-  width:38px;
-  height:34px;
-  flex:0 0 auto;
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:3px;
-  background:var(--accent);
-  color:#fff;
-  cursor:pointer;
-  font-size:15px;
-}
-
-.play-main:hover{background:var(--accent-hover)}
-
-.time-slider-wrap{
-  position:relative;
-  flex:1;
-  min-width:100px;
-}
-
-#time-slider{
-  width:100%;
-  min-width:100px;
-  accent-color:#4e9ae8;
-}
-
-#time-hover-tip{
-  position:absolute;
-  bottom:30px;
-  left:0;
-  z-index:1300;
-  display:none;
-  padding:5px 8px;
-  border:1px solid rgba(255,255,255,.32);
-  border-radius:4px;
-  background:rgba(12,16,22,.94);
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-  line-height:1;
-  white-space:nowrap;
-  pointer-events:none;
-  transform:translateX(-50%);
-  box-shadow:0 3px 10px rgba(0,0,0,.4);
-}
-
-#time-hover-tip::after{
-  content:"";
-  position:absolute;
-  top:100%;
-  left:50%;
-  border:5px solid transparent;
-  border-top-color:#fff;
-  transform:translateX(-50%);
-}
+.time-float{position:fixed;left:0;right:0;bottom:0;z-index:1000;width:100%;height:var(--timeline-h);display:flex;align-items:center;gap:16px;padding:12px 18px 14px;border-top:1px solid rgba(255,255,255,.22);background:rgba(20,24,30,.96);color:#fff;box-shadow:0 -5px 20px rgba(0,0,0,.32)}
+.time-top{display:flex;align-items:center;gap:10px;flex:0 0 auto}.time-current{min-width:152px;color:#fff;font-size:17px;font-weight:700;white-space:nowrap}.date-row{display:flex;gap:5px}
+.date-row select{width:auto;height:30px;padding:0 7px;border:1px solid rgba(255,255,255,.2);border-radius:3px;background:#323944;color:#fff;font-size:12px}
+.time-row{display:flex;align-items:center;flex:1;min-width:0;gap:12px}.play-main{width:38px;height:34px;flex:0 0 auto;border:1px solid rgba(255,255,255,.18);border-radius:3px;background:var(--accent);color:#fff;cursor:pointer;font-size:15px}.play-main:hover{background:var(--accent-hover)}
+.time-slider-wrap{position:relative;flex:1;min-width:100px}#time-slider{width:100%;min-width:100px;accent-color:#4e9ae8}
+#time-hover-tip{position:absolute;bottom:30px;left:0;z-index:1300;display:none;padding:5px 8px;border:1px solid rgba(255,255,255,.32);border-radius:4px;background:rgba(12,16,22,.94);color:#fff;font-size:12px;font-weight:700;line-height:1;white-space:nowrap;pointer-events:none;transform:translateX(-50%);box-shadow:0 3px 10px rgba(0,0,0,.4)}
+#time-hover-tip::after{content:"";position:absolute;top:100%;left:50%;border:5px solid transparent;border-top-color:#fff;transform:translateX(-50%)}
 
 @media(max-width:720px){
-  :root{
-    --panel-w:min(320px,calc(100vw - 34px));
-    --timeline-h:118px;
-  }
-
+  :root{--panel-w:min(320px,calc(100vw - 34px));--timeline-h:118px}
   .logo-sub,.search-bar{display:none}
-
-  header{
-    justify-content:space-between;
-    background:linear-gradient(90deg,rgba(8,12,16,.96),rgba(8,12,16,.45),transparent);
-  }
-
-  #panel{
-    top:64px;
-    max-height:calc(100vh - var(--timeline-h) - 74px);
-  }
-
+  header{justify-content:space-between;background:linear-gradient(90deg,rgba(8,12,16,.96),rgba(8,12,16,.45),transparent)}
+  #panel{top:64px;max-height:calc(100vh - var(--timeline-h) - 74px)}
   #panel-toggle{left:calc(var(--panel-w) + 18px)}
-
-  .time-float{
-    height:var(--timeline-h);
-    flex-direction:column;
-    align-items:stretch;
-    gap:7px;
-    padding:8px 10px;
-  }
-
-  .time-top{justify-content:space-between}
-
-  .time-current{
-    min-width:auto;
-    font-size:13px;
-  }
-
-  .date-row select{width:54px}
+  .time-float{height:var(--timeline-h);flex-direction:column;align-items:stretch;gap:7px;padding:8px 10px}
+  .time-top{justify-content:space-between}.time-current{min-width:auto;font-size:13px}.date-row select{width:54px}
 }
 </style>
 </head>
@@ -532,12 +93,10 @@ input[type=range]{accent-color:var(--accent)}
       <div class="logo-sub">Remote Sensing Viewer</div>
     </div>
   </a>
-
   <div class="search-bar">
     <span class="search-icon">⌕</span>
     <input id="place-search" placeholder="Search places or enter coordinates">
   </div>
-
   <button class="header-button" id="locate" title="Locate map center">⌖</button>
 </header>
 
@@ -559,7 +118,6 @@ input[type=range]{accent-color:var(--accent)}
     <div class="group">
       <label>Remote Sensing Product</label>
       <select id="product"></select>
-
       <div class="panel-legend" id="legend" style="display:none">
         <div class="panel-legend-bar-wrap">
           <div class="panel-legend-bar" id="legend-bar"></div>
@@ -590,6 +148,7 @@ input[type=range]{accent-color:var(--accent)}
         <button class="btn secondary" id="toggle-countries">Countries: On</button>
         <button class="btn secondary" id="toggle-layer">Data Layer: On</button>
         <button class="btn secondary" id="toggle-meas">Observations: On</button>
+        <button class="btn secondary" id="toggle-wind">Wind: Off</button>
       </div>
     </div>
 
@@ -620,7 +179,6 @@ input[type=range]{accent-color:var(--accent)}
 
   <div class="time-row">
     <button class="play-main" id="play" aria-label="Play animation">▶</button>
-
     <div class="time-slider-wrap">
       <input id="time-slider" type="range" min="0" max="23" value="0">
       <div id="time-hover-tip">00:00</div>
@@ -632,24 +190,20 @@ input[type=range]{accent-color:var(--accent)}
 let cfg
 let products=[]
 let current=null
-let overlay=null
 let map=null
-let countryLayer=null
 let showCountries=true
 let layerVisible=true
-let timer=null
-let playing=false
-let measLayer=null
 let showMeas=true
+let showGibs=true
+let showWind=false
+let playing=false
+let timer=null
 let measCache={}
 let stationsCache=null
-let gibsLayer=null
-let showGibs=true
 
 const $=id=>document.getElementById(id)
-const status=()=>{}
-const hours24=[...Array(24)].map((_,i)=>'H'+String(i).padStart(2,'0'))
 const pad=n=>String(n).padStart(2,'0')
+const hours24=[...Array(24)].map((_,i)=>'H'+pad(i))
 const dateCompact=s=>String(s||'').replaceAll('-','')
 const dateValue=()=>`${$('year').value}${$('month').value}${$('day').value}`
 const dateLabel=()=>`${$('year').value}-${$('month').value}-${$('day').value}`
@@ -658,10 +212,7 @@ const daysInMonth=(y,m)=>new Date(+y,+m,0).getDate()
 function templateUrl(template,date,hour=''){
   if(!template||!date)return''
   const d=dateCompact(date)
-  return template
-    .replaceAll('{year}',d.slice(0,4))
-    .replaceAll('{date}',d)
-    .replaceAll('{hour}',hour)
+  return template.replaceAll('{year}',d.slice(0,4)).replaceAll('{date}',d).replaceAll('{hour}',hour)
 }
 
 function updateTimeText(){
@@ -686,8 +237,7 @@ function fillMonths(){
 
 function fillDays(){
   const old=$('day').value
-  const days=[...Array(daysInMonth($('year').value,$('month').value))]
-    .map((_,i)=>pad(i+1))
+  const days=[...Array(daysInMonth($('year').value,$('month').value))].map((_,i)=>pad(i+1))
   $('day').innerHTML=days.map(d=>`<option value="${d}">${d}</option>`).join('')
   $('day').value=days.includes(old)?old:'01'
 }
@@ -714,14 +264,8 @@ function getLon(item){
 }
 
 function getValue(item){
-  if(current?.id==='SAOD'){
-    return +(item?.AOD_550nm??item?.AOD??item?.aod??item?.AOD550??item?.value??item?.val)
-  }
-
-  if(current?.id==='SPM2p5'){
-    return +(item?.PM2p5??item?.PM25??item?.pm25??item?.PM2_5??item?.value??item?.val)
-  }
-
+  if(current?.id==='SAOD')return +(item?.AOD_550nm??item?.AOD??item?.aod??item?.AOD550??item?.value??item?.val)
+  if(current?.id==='SPM2p5')return +(item?.PM2p5??item?.PM25??item?.pm25??item?.PM2_5??item?.value??item?.val)
   return +(item?.value??item?.val)
 }
 
@@ -729,26 +273,18 @@ function getRecordHour(item){
   const raw=item?.Date??item?.date??item?.datetime??item?.time??item?.Time
   if(raw==null)return null
   if(typeof raw==='string'&&/^H\d{2}$/.test(raw))return raw
-
   const t=new Date(raw).getTime()
   if(!Number.isFinite(t))return null
-
   return'H'+pad(new Date(t).getUTCHours())
 }
 
 function colorOfValue(value){
   const legend=current?.legend
   if(!legend?.colors?.length)return'#999'
-
   const min=Number(legend.min)
   const max=Number(legend.max)
   const v=Math.max(min,Math.min(max,Number(value)))
-
-  const i=Math.min(
-    legend.colors.length-1,
-    Math.floor(((v-min)/(max-min))*legend.colors.length)
-  )
-
+  const i=Math.min(legend.colors.length-1,Math.floor(((v-min)/(max-min))*legend.colors.length))
   return legend.colors[i]
 }
 
@@ -760,51 +296,53 @@ function measurementKey(){
   return`${current?.id}_${dateValue()}_${hours24[+$('time-slider').value||0]}`
 }
 
-function bringMeasurementsToFront(){
-  if(!measLayer)return
-
-  measLayer.eachLayer(layer=>{
-    if(typeof layer.bringToFront==='function')layer.bringToFront()
-  })
+function removeLayerAndSource(layerId,sourceId=layerId){
+  if(map.getLayer(layerId))map.removeLayer(layerId)
+  if(map.getSource(sourceId))map.removeSource(sourceId)
 }
 
-map=L.map('map',{
-  worldCopyJump:true,
-  zoomControl:false,
-  minZoom:2,
-  maxZoom:8
-}).setView([25,115],3)
-
-L.control.zoom({position:'topright'}).addTo(map)
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:8,
-  minZoom:2,
-  attribution:'&copy; OpenStreetMap'
-}).addTo(map)
-
-function updateGibsLayer(){
-  if(gibsLayer){
-    map.removeLayer(gibsLayer)
-    gibsLayer=null
+function updateLegend(){
+  const legend=current?.legend
+  if(!legend){
+    $('legend').style.display='none'
+    return
   }
 
+  $('legend').style.display='block'
+  $('legend-bar').style.background=`linear-gradient(to right,${(legend.colors||[]).join(',')})`
+
+  const min=Number(legend.min)
+  const max=Number(legend.max)
+
+  $('legend-labels').innerHTML=(legend.labels||[]).map(label=>{
+    const value=Number(label)
+    const left=Number.isFinite(value)&&max>min?((value-min)/(max-min))*100:50
+    return`<span style="left:${left}%">${label}</span>`
+  }).join('')
+}
+
+function updateGibsLayer(){
+  removeLayerAndSource('gibs-layer','gibs-source')
   if(!showGibs)return
 
   const layerId=$('gibs-product').value
   const date=dateLabel()
 
-  gibsLayer=L.tileLayer(
-    `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${layerId}/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`,
-    {
-      minZoom:1,
-      maxZoom:9,
-      maxNativeZoom:9,
-      opacity:1,
-      crossOrigin:true,
-      attribution:'NASA GIBS · NASA ESDIS'
-    }
-  ).addTo(map)
+  map.addSource('gibs-source',{
+    type:'raster',
+    tiles:[`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${layerId}/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`],
+    tileSize:256,
+    minzoom:1,
+    maxzoom:9,
+    attribution:'NASA GIBS · NASA ESDIS'
+  })
+
+  map.addLayer({
+    id:'gibs-layer',
+    type:'raster',
+    source:'gibs-source',
+    paint:{'raster-opacity':1}
+  })
 }
 
 async function loadCountries(){
@@ -812,20 +350,98 @@ async function loadCountries(){
     const response=await fetch('./Countries.geojson?ts='+Date.now())
     if(!response.ok)throw new Error('Countries.geojson failed: HTTP '+response.status)
 
-    countryLayer=L.geoJSON(await response.json(),{
-      style:{
-        color:'#fff',
-        weight:1,
-        opacity:.72,
-        fill:false,
-        interactive:false
-      }
+    removeLayerAndSource('countries-line','countries-source')
+
+    map.addSource('countries-source',{
+      type:'geojson',
+      data:await response.json()
     })
 
-    if(showCountries)countryLayer.addTo(map)
+    map.addLayer({
+      id:'countries-line',
+      type:'line',
+      source:'countries-source',
+      paint:{
+        'line-color':'#fff',
+        'line-width':1,
+        'line-opacity':.72
+      },
+      layout:{
+        visibility:showCountries?'visible':'none'
+      }
+    })
   }catch(error){
     console.error(error)
   }
+}
+
+function updateLayer(fit=false){
+  if(!current)return
+
+  removeLayerAndSource('product-layer','product-source')
+  if(!layerVisible)return
+
+  const hour=hours24[+$('time-slider').value||0]
+  const url=templateUrl(current.url_template,dateValue(),hour)
+  const bounds=current.bounds
+
+  if(!url||!bounds?.length)return
+
+  const south=bounds[0][0]
+  const west=bounds[0][1]
+  const north=bounds[1][0]
+  const east=bounds[1][1]
+
+  map.addSource('product-source',{
+    type:'image',
+    url,
+    coordinates:[
+      [west,north],
+      [east,north],
+      [east,south],
+      [west,south]
+    ]
+  })
+
+  map.addLayer({
+    id:'product-layer',
+    type:'raster',
+    source:'product-source',
+    paint:{
+      'raster-opacity':+$('opacity').value/100
+    }
+  })
+
+  if(fit){
+    map.fitBounds([[west,south],[east,north]],{
+      padding:50,
+      duration:500
+    })
+  }
+
+  $('info').innerHTML=`Date: ${dateLabel()} ${hour.slice(1)}:00 UTC`
+}
+
+function updateWindLayer(){
+  removeLayerAndSource('wind-layer','wind-source')
+  if(!showWind)return
+
+  const omUrl='https://map-tiles.open-meteo.com/data_spatial/dwd_icon/latest.json?time_step=current_time_1H&variable=wind_speed_10m'
+
+  map.addSource('wind-source',{
+    type:'raster',
+    url:'om://'+omUrl,
+    maxzoom:12
+  })
+
+  map.addLayer({
+    id:'wind-layer',
+    type:'raster',
+    source:'wind-source',
+    paint:{
+      'raster-opacity':.68
+    }
+  })
 }
 
 async function loadStations(){
@@ -847,7 +463,7 @@ async function loadStations(){
 }
 
 async function loadMeas(){
-  if(!current)return
+  if(!current||!showMeas)return
 
   const key=measurementKey()
 
@@ -869,30 +485,20 @@ async function loadMeas(){
     drawMeas(data)
   }catch(error){
     console.error(error)
-
-    if(measLayer){
-      map.removeLayer(measLayer)
-      measLayer=null
-    }
+    removeLayerAndSource('measurements-circle','measurements-source')
   }
 }
 
 function drawMeas(data){
-  if(measLayer){
-    map.removeLayer(measLayer)
-    measLayer=null
-  }
+  removeLayerAndSource('measurements-circle','measurements-source')
 
   if(!showMeas||!data||!current)return
 
   const records=normalizeRecords(data)
-  const stations=new Map(
-    normalizeRecords(stationsCache).map(s=>[stationId(s),s])
-  )
-
+  const stations=new Map(normalizeRecords(stationsCache).map(s=>[stationId(s),s]))
   const currentHour=hours24[+$('time-slider').value||0]
 
-  const points=records
+  const features=records
     .filter(record=>{
       const h=getRecordHour(record)
       return h===null||h===currentHour
@@ -904,84 +510,67 @@ function drawMeas(data){
       const value=getValue(record)
 
       if(!Number.isFinite(lat)||!Number.isFinite(lon)||!Number.isFinite(value))return null
-      return{lat,lon,value,record,station}
+
+      return{
+        type:'Feature',
+        geometry:{
+          type:'Point',
+          coordinates:[lon,lat]
+        },
+        properties:{
+          id:stationId(record)||stationId(station)||'',
+          value,
+          color:colorOfValue(value),
+          date:`${dateLabel()} ${currentHour.slice(1)}:00 UTC`
+        }
+      }
     })
     .filter(Boolean)
 
-  measLayer=L.layerGroup(points.map(point=>{
-    const id=stationId(point.record)||stationId(point.station)||''
+  map.addSource('measurements-source',{
+    type:'geojson',
+    data:{
+      type:'FeatureCollection',
+      features
+    }
+  })
 
-    return L.circleMarker([point.lat,point.lon],{
-      radius:3,
-      color:'#fff',
-      weight:.8,
-      fillColor:colorOfValue(point.value),
-      fillOpacity:.94
-    }).bindPopup(
-      `<b>Site:</b> ${id}<br>`+
-      `<b>Value:</b> ${point.value}<br>`+
-      `<b>Date:</b> ${dateLabel()} ${currentHour.slice(1)}:00 UTC`
-    )
-  })).addTo(map)
+  map.addLayer({
+    id:'measurements-circle',
+    type:'circle',
+    source:'measurements-source',
+    paint:{
+      'circle-radius':4,
+      'circle-color':['get','color'],
+      'circle-stroke-color':'#fff',
+      'circle-stroke-width':.8,
+      'circle-opacity':.94
+    }
+  })
 
-  bringMeasurementsToFront()
-
-  $('info').innerHTML=
-    `Date: ${dateLabel()} ${currentHour.slice(1)}:00 UTC<br>`+
-    `Observations: ${points.length} points`
+  $('info').innerHTML=`Date: ${dateLabel()} ${currentHour.slice(1)}:00 UTC<br>Observations: ${features.length} points`
 }
 
-function updateLegend(){
-  const legend=current?.legend
+function bindMeasurementPopup(){
+  map.on('click','measurements-circle',e=>{
+    const feature=e.features?.[0]
+    if(!feature)return
 
-  if(!legend){
-    $('legend').style.display='none'
-    return
-  }
+    const{id,value,date}=feature.properties
 
-  $('legend').style.display='block'
+    new maplibregl.Popup()
+      .setLngLat(feature.geometry.coordinates)
+      .setHTML(`<b>Site:</b> ${id}<br><b>Value:</b> ${value}<br><b>Date:</b> ${date}`)
+      .addTo(map)
+  })
 
-  $('legend-bar').style.background=
-    `linear-gradient(to right,${(legend.colors||[]).join(',')})`
+  map.on('mouseenter','measurements-circle',()=>{
+    map.getCanvas().style.cursor='pointer'
+  })
 
-  const min=Number(legend.min)
-  const max=Number(legend.max)
-
-  $('legend-labels').innerHTML=(legend.labels||[]).map(label=>{
-    const value=Number(label)
-    const left=Number.isFinite(value)&&max>min
-      ?((value-min)/(max-min))*100
-      :50
-
-    return`<span style="left:${left}%">${label}</span>`
-  }).join('')
-}
-
-function updateLayer(fit=false){
-  if(!current)return
-
-  if(!layerVisible){
-    if(overlay)map.removeLayer(overlay)
-    return
-  }
-
-  const hour=hours24[+$('time-slider').value||0]
-  const url=templateUrl(current.url_template,dateValue(),hour)
-
-  if(overlay)map.removeLayer(overlay)
-
-  overlay=L.imageOverlay(url,current.bounds,{
-    opacity:+$('opacity').value/100,
-    interactive:false
-  }).addTo(map)
-
-  overlay.on('error',()=>{})
-  overlay.bringToFront()
-  bringMeasurementsToFront()
-
-  if(fit&&current.bounds)map.fitBounds(current.bounds)
-
-  $('info').innerHTML=`Date: ${dateLabel()} ${hour.slice(1)}:00 UTC`
+  map.on('mouseleave','measurements-circle',()=>{
+    map.getCanvas().style.cursor=''
+  })
 }
 
 async function selectProduct(id){
@@ -997,10 +586,7 @@ async function selectProduct(id){
   stationsCache=null
   measCache={}
 
-  if(measLayer){
-    map.removeLayer(measLayer)
-    measLayer=null
-  }
+  removeLayerAndSource('measurements-circle','measurements-source')
 
   await loadStations()
   updateLayer(true)
@@ -1027,32 +613,66 @@ function setHour(index){
 }
 
 async function init(){
-  try{
-    fillDateControls()
-    updateTimeText()
+  fillDateControls()
+  updateTimeText()
 
-    const response=await fetch('./products.json?ts='+Date.now())
-    if(!response.ok)throw new Error('products.json failed: HTTP '+response.status)
+  maplibregl.addProtocol('om',OMWeatherMapLayer.omProtocol)
 
-    cfg=await response.json()
-    products=cfg.products||[]
+  map=new maplibregl.Map({
+    container:'map',
+    style:{
+      version:8,
+      sources:{
+        osm:{
+          type:'raster',
+          tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+          tileSize:256,
+          attribution:'© OpenStreetMap contributors',
+          maxzoom:19
+        }
+      },
+      layers:[
+        {
+          id:'osm-base',
+          type:'raster',
+          source:'osm'
+        }
+      ]
+    },
+    center:[115,25],
+    zoom:3,
+    minZoom:2,
+    maxZoom:12,
+    attributionControl:true
+  })
 
-    if(!products.length)throw new Error('No products found in products.json')
+  map.addControl(new maplibregl.NavigationControl(),'top-right')
 
-    $('product').innerHTML=products.map(p=>
-      `<option value="${p.id}">${p.name||p.id}</option>`
-    ).join('')
+  map.on('load',async()=>{
+    bindMeasurementPopup()
 
-    const product=products.find(p=>p.id===cfg.default_product)||products[0]
-    $('product').value=product.id
+    try{
+      const response=await fetch('./products.json?ts='+Date.now())
+      if(!response.ok)throw new Error('products.json failed: HTTP '+response.status)
 
-    await loadCountries()
-    updateGibsLayer()
-    await selectProduct(product.id)
-  }catch(error){
-    console.error(error)
-    $('product-desc').textContent=error.message
-  }
+      cfg=await response.json()
+      products=cfg.products||[]
+
+      if(!products.length)throw new Error('No products found in products.json')
+
+      $('product').innerHTML=products.map(p=>`<option value="${p.id}">${p.name||p.id}</option>`).join('')
+
+      const product=products.find(p=>p.id===cfg.default_product)||products[0]
+      $('product').value=product.id
+
+      await loadCountries()
+      updateGibsLayer()
+      await selectProduct(product.id)
+    }catch(error){
+      console.error(error)
+      $('product-desc').textContent=error.message
+    }
+  })
 }
 
 $('product').onchange=async e=>{
@@ -1060,8 +680,7 @@ $('product').onchange=async e=>{
   await selectProduct(e.target.value)
 }
 
-$('year').onchange=async()=>{
-  fillMonths()
+async function changeDate(){
   updateTimeText()
   stationsCache=null
   measCache={}
@@ -1069,49 +688,47 @@ $('year').onchange=async()=>{
   await loadStations()
   updateLayer(true)
   await loadMeas()
+}
+
+$('year').onchange=async()=>{
+  fillMonths()
+  await changeDate()
 }
 
 $('month').onchange=async()=>{
   fillDays()
-  updateTimeText()
-  stationsCache=null
-  measCache={}
-  updateGibsLayer()
-  await loadStations()
-  updateLayer(true)
-  await loadMeas()
+  await changeDate()
 }
 
 $('day').onchange=async()=>{
-  updateTimeText()
-  measCache={}
-  updateGibsLayer()
-  updateLayer(true)
-  await loadMeas()
+  await changeDate()
 }
 
 $('time-slider').oninput=e=>setHour(+e.target.value)
 
 $('play').onclick=()=>{
   playing=!playing
+
   $('play').textContent=playing?'Ⅱ':'▶'
   $('play').setAttribute('aria-label',playing?'Pause animation':'Play animation')
 
-  if(timer){
-    clearInterval(timer)
-    timer=null
-  }
+  if(timer)clearInterval(timer)
 
   if(playing){
     timer=setInterval(()=>{
       setHour((+$('time-slider').value+1)%24)
     },800)
+  }else{
+    timer=null
   }
 }
 
 $('opacity').oninput=e=>{
   $('opacity-val').textContent=e.target.value+'%'
-  if(overlay)overlay.setOpacity(+e.target.value/100)
+
+  if(map?.getLayer('product-layer')){
+    map.setPaintProperty('product-layer','raster-opacity',+e.target.value/100)
+  }
 }
 
 $('toggle-gibs').onclick=()=>{
@@ -1128,18 +745,15 @@ $('toggle-countries').onclick=()=>{
   showCountries=!showCountries
   $('toggle-countries').textContent='Countries: '+(showCountries?'On':'Off')
 
-  if(countryLayer){
-    if(showCountries)countryLayer.addTo(map)
-    else map.removeLayer(countryLayer)
+  if(map?.getLayer('countries-line')){
+    map.setLayoutProperty('countries-line','visibility',showCountries?'visible':'none')
   }
 }
 
 $('toggle-layer').onclick=()=>{
   layerVisible=!layerVisible
   $('toggle-layer').textContent='Data Layer: '+(layerVisible?'On':'Off')
-
-  if(!layerVisible&&overlay)map.removeLayer(overlay)
-  else updateLayer()
+  updateLayer()
 }
 
 $('toggle-meas').onclick=()=>{
@@ -1147,15 +761,29 @@ $('toggle-meas').onclick=()=>{
   $('toggle-meas').textContent='Observations: '+(showMeas?'On':'Off')
 
   if(showMeas)loadMeas()
-  else if(measLayer){
-    map.removeLayer(measLayer)
-    measLayer=null
-  }
+  else removeLayerAndSource('measurements-circle','measurements-source')
+}
+
+$('toggle-wind').onclick=()=>{
+  showWind=!showWind
+  $('toggle-wind').textContent='Wind: '+(showWind?'On':'Off')
+  updateWindLayer()
 }
 
 $('load-meas').onclick=async()=>{
   await loadStations()
   await loadMeas()
+}
+
+$('fit').onclick=()=>{
+  if(!current?.bounds)return
+
+  const[[south,west],[north,east]]=current.bounds
+
+  map.fitBounds([[west,south],[east,north]],{
+    padding:50,
+    duration:500
+  })
 }
 
 $('download').onclick=()=>{
@@ -1170,10 +798,6 @@ $('download').onclick=()=>{
   link.click()
 }
 
-$('fit').onclick=()=>{
-  if(current?.bounds)map.fitBounds(current.bounds)
-}
-
 $('panel-toggle').onclick=()=>{
   const panel=$('panel')
   const isCollapsed=panel.classList.toggle('collapsed')
@@ -1181,11 +805,27 @@ $('panel-toggle').onclick=()=>{
   $('panel-toggle').classList.toggle('collapsed',isCollapsed)
   $('panel-toggle').textContent=isCollapsed?'›':'‹'
 
-  setTimeout(()=>map.invalidateSize(),260)
+  setTimeout(()=>map?.resize(),260)
 }
 
 $('locate').onclick=()=>{
-  map.locate({setView:true,maxZoom:8})
+  if(!navigator.geolocation){
+    alert('Your browser does not support geolocation.')
+    return
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    position=>{
+      map.flyTo({
+        center:[position.coords.longitude,position.coords.latitude],
+        zoom:8
+      })
+    },
+    error=>{
+      console.error(error)
+      alert('Unable to get your location. Please check browser permissions.')
+    }
+  )
 }
 
 $('place-search').addEventListener('keydown',async e=>{
@@ -1197,18 +837,23 @@ $('place-search').addEventListener('keydown',async e=>{
   const coord=q.match(/^\s*(-?\d+(\.\d+)?)\s*[, ]\s*(-?\d+(\.\d+)?)\s*$/)
 
   if(coord){
-    map.setView([+coord[1],+coord[3]],8)
+    map.flyTo({
+      center:[+coord[3],+coord[1]],
+      zoom:8
+    })
     return
   }
 
   try{
-    const response=await fetch(
-      `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(q)}`
-    )
-
+    const response=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(q)}`)
     const results=await response.json()
 
-    if(results?.length)map.setView([+results[0].lat,+results[0].lon],8)
+    if(results?.length){
+      map.flyTo({
+        center:[+results[0].lon,+results[0].lat],
+        zoom:8
+      })
+    }
   }catch(error){
     console.error(error)
   }
