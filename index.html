@@ -194,7 +194,6 @@ let showCountries=true
 let layerVisible=true
 let showMeas=true
 let showGibs=true
-let showWind=false
 let playing=false
 let timer=null
 let measCache={}
@@ -419,28 +418,6 @@ function updateLayer(fit=false){
   }
 
   $('info').innerHTML=`Date: ${dateLabel()} ${hour.slice(1)}:00 UTC`
-}
-
-function updateWindLayer(){
-  removeLayerAndSource('wind-layer','wind-source')
-  if(!showWind)return
-
-  const omUrl='https://map-tiles.open-meteo.com/data_spatial/dwd_icon/latest.json?time_step=current_time_1H&variable=wind_speed_10m'
-
-  map.addSource('wind-source',{
-    type:'raster',
-    url:'om://'+omUrl,
-    maxzoom:12
-  })
-
-  map.addLayer({
-    id:'wind-layer',
-    type:'raster',
-    source:'wind-source',
-    paint:{
-      'raster-opacity':.68
-    }
-  })
 }
 
 async function loadStations(){
@@ -763,11 +740,6 @@ $('toggle-meas').onclick=()=>{
   else removeLayerAndSource('measurements-circle','measurements-source')
 }
 
-$('toggle-wind').onclick=()=>{
-  showWind=!showWind
-  $('toggle-wind').textContent='Wind: '+(showWind?'On':'Off')
-  updateWindLayer()
-}
 
 $('load-meas').onclick=async()=>{
   await loadStations()
